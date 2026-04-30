@@ -820,7 +820,7 @@ function clearImageCache() {
   showSettingsStatus('🗑️ מטמון התמונות נוקה — הבקבוקים יטענו מחדש', '#2e7d32');
 }
 function enqueueBottleImage(pid, name) {
-  _imgQueue.push({pid, name});
+  _imgQueue.push({pid, productName: name});
   _pumpQueue();
 }
 function _pumpQueue() {
@@ -856,7 +856,9 @@ function _genBottleSvg(productName, cat) {
 
 // ── Brand → real product photo (only verified-working TheCocktailDB CDN) ──
 function _getBrandImageUrl(name) {
-  const cdb = (ing) => "https://www.thecocktaildb.com/images/ingredients/" + encodeURIComponent(ing) + "-Medium.png";
+  if (!name || typeof name !== 'string') return null;
+  const _raw_cdb = (ing) => "https://www.thecocktaildb.com/images/ingredients/" + encodeURIComponent(ing) + "-Medium.png";
+  const cdb = (ing) => "https://images.weserv.nl/?url=www.thecocktaildb.com/images/ingredients/" + encodeURIComponent(ing) + "-Medium.png&w=400";
   const map = [
     ["אבסולוט",     cdb("Absolut Vodka")],
     ["ג'ק דניאלס",  cdb("Jack Daniels")],

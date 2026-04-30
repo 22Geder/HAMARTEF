@@ -825,7 +825,7 @@ function _pumpQueue() {
   if (_imgRunning >= IMG_CONCURRENCY || !_imgQueue.length) return;
   const item = _imgQueue.shift();
   _imgRunning++;
-  _doFetch(item.pid, item.name).finally(() => {
+  _doFetch(item.pid, item.productName, item.cat).finally(() => {
     _imgRunning--;
     setTimeout(_pumpQueue, IMG_DELAY_MS);
   });
@@ -1033,44 +1033,52 @@ async function _fetchGeminiImage(productName, key, attempt) {
 }
 
 async function _doFetch(pid, productName, cat) {
+  // Cached?
   if (imageCache[pid]) {
     const el = document.getElementById("img_" + pid);
     if (el) el.src = imageCache[pid];
     return;
   }
 
-  let imageUrl = null;
+  // STEP 1: Generate SVG bottle IMMEDIATELY — guaranteed, no network.
+  // This is what gets cached and displayed. Always succeeds.
+  const svgUrl = _genBottleSvg(productName, cat);
+  imageCache[pid] = svgUrl;
+  try { saveImageCache(); } catch(e) {}
+  const el = document.getElementById("img_" + pid);
+  if (el) el.src = svgUrl;
+  console.log("[SVG]", productName, "(cat:" + (cat||"?") + ")");
 
-  // 1. TheCocktailDB brand-specific
-  const cdbUrl = _getCocktailDBUrl(productName);
-  if (cdbUrl) {
-    imageUrl = await _verifyImage(cdbUrl);
-    if (imageUrl) console.log("[CDB brand]", productName, "→", imageUrl);
-  }
+  // STEP 2: Try to upgrade to TheCocktailDB brand image (best effort)
+  try {
+    const cdbUrl = _getCocktailDBUrl(productName);
+    if (cdbUrl) {
+      const verified = await _verifyImage(cdbUrl);
+      if (verified) {
+        imageCache[pid] = verified;
+        try { saveImageCache(); } catch(e) {}
+        const el2 = document.getElementById("img_" + pid);
+        if (el2) el2.src = verified;
+        console.log("[CDB upgrade]", productName, "→", verified);
+        return;
+      }
+    }
+  } catch(e) { /* ignore */ }
 
-  // 1b. SVG bottle — guaranteed fallback, no network, cached in localStorage
-  if (!imageUrl) {
-    imageUrl = _genBottleSvg(productName, cat);
-    console.log("[SVG]", productName);
-  }
-
-  // 3. Gemini fallback (requires API key)
-  if (!imageUrl) {
+  // STEP 3: Try Gemini upgrade (requires key)
+  try {
     const key = localStorage.getItem("amartef_gcs_key") || "";
     if (key) {
-      imageUrl = await _fetchGeminiImage(pid, productName, key);
-      if (imageUrl) console.log("[Gemini]", productName, "→", imageUrl);
+      const gem = await _fetchGeminiImage(pid, productName, key);
+      if (gem) {
+        imageCache[pid] = gem;
+        try { saveImageCache(); } catch(e) {}
+        const el3 = document.getElementById("img_" + pid);
+        if (el3) el3.src = gem;
+        console.log("[Gemini upgrade]", productName);
+      }
     }
-  }
-
-  if (imageUrl) {
-    imageCache[pid] = imageUrl;
-    try { saveImageCache(); } catch(e) {}
-    const el = document.getElementById("img_" + pid);
-    if (el) el.src = imageUrl;
-  } else {
-    console.warn("[img] No image found for", productName);
-  }
+  } catch(e) { /* ignore */ }
 }
 async function fetchBottleImage(pid, productName, cat) {
   if (imageCache[pid]) {

@@ -1,0 +1,33 @@
+card.innerHTML = `
+        <img id="img_${p.id}" class="p-bottle" src="${bottleSVG(p.cat, p.id)}" alt="${p.name}" onerror="this.src='${bottleSVG(p.cat, p.id)}'" />
+        <div class="p-name">${p.name}</div>
+        <div class="sell-row">
+          <label>קנייה:</label>
+          <input class="sell-inp buy-inp" type="number" min="0" id="bi_${p.id}" value="${customBuy}"
+            onchange="onBuyChange(${p.id},this.value)" />
+        </div>
+        <div class="sell-row">
+          <label>מכירה:</label>
+          <input class="sell-inp" type="number" min="0" id="si_${p.id}" value="${customSell}"
+            onchange="onSellChange(${p.id},this.value)" min="${p.sellMin??0}" max="${p.sellMax??9999}" />
+        </div>
+        <div class="qty-row">
+          <button class="qbtn" onclick="cardQtyChange(${p.id},-1)">−</button>
+          <div    class="qdisplay" id="cq_${p.id}">1</div>
+          <button class="qbtn" onclick="cardQtyChange(${p.id},1)">+</button>
+        </div>
+        <button class="add-btn" onclick="addToCart(${p.id})">
+          ${mode === "order" ? "הוסף להזמנה 📦" : "הוסף להצעה 🛒"}
+        </button>
+      `;
+      grid.appendChild(card);
+      // Fetch bottle image (uses cache or queues API call)
+      if (!imageCache[p.id]) fetchBottleImage(p.id, p.name, p.cat);
+      else { const el = document.getElementById('img_'+p.id); if(el) el.src=imageCache[p.id]; }
+    });
+    con.appendChild(grid);
+  });
+}
+
+function cardQtyChange(pid, d) {
+ 

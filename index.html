@@ -830,6 +830,75 @@ function _pumpQueue() {
     setTimeout(_pumpQueue, IMG_DELAY_MS);
   });
 }
+// ── Brand → TheCocktailDB direct bottle image (no API key) ──────────────
+function _getCocktailDBUrl(name) {
+  const map = [
+    ["אבסולוט",        "Absolut Vodka"],
+    ["סמירנוף",        "Smirnoff"],
+    ["גריי גוס",       "Grey Goose"],
+    ["בלבדר",          "Belvedere Vodka"],
+    ["קטל וואן",       "Ketel One"],
+    ["סירוק",          "Ciroc"],
+    ["קריסטל הד",      "Crystal Head Vodka"],
+    ["פינלנדיה",       "Finlandia"],
+    ["סטוליצ'נאיה",    "Stolichnaya"],
+    ["רוסיאן סטנדרט",  "Russian Standard"],
+    ["ג'וני ווקר",     "Johnnie Walker"],
+    ["ג'ק דניאלס",     "Jack Daniels"],
+    ["צ'יבס ריגל",     "Chivas Regal"],
+    ["ג'יימסון",       "Jameson"],
+    ["גלנפידיך",       "Glenfiddich"],
+    ["גלנליבט",        "Glenlivet"],
+    ["מאנקי שולדר",    "Monkey Shoulder"],
+    ["בלנטיינס",       "Ballantines"],
+    ["דיוורס",         "Dewars"],
+    ["פיימס גראוס",    "Famous Grouse"],
+    ["גרנטס",          "Grants"],
+    ["לפרויג",         "Laphroaig"],
+    ["מייקרס מארק",    "Makers Mark"],
+    ["ג'ים ביים",      "Jim Beam"],
+    ["ווילד טרקי",     "Wild Turkey"],
+    ["טולמור דיו",     "Tullamore Dew"],
+    ["בקארדי",         "Bacardi"],
+    ["בקרדי",          "Bacardi"],
+    ["קפטן מורגן",     "Captain Morgan"],
+    ["הוואנה קלאב",    "Havana Club"],
+    ["דיפלומטיקו",     "Diplomatico Rum"],
+    ["מליבו",          "Malibu"],
+    ["אפלטון",         "Appleton Estate"],
+    ["חוסה קוארבו",    "Jose Cuervo"],
+    ["אולמקה",         "Olmeca"],
+    ["פטרון",          "Patron Tequila"],
+    ["1800",           "1800 Tequila"],
+    ["אספולון",        "Espolon"],
+    ["דון חוליו",      "Don Julio"],
+    ["הנדריקס",        "Hendricks Gin"],
+    ["טנקראי",         "Tanqueray"],
+    ["בומביי",         "Bombay Sapphire"],
+    ["ביפיטר",         "Beefeater"],
+    ["גורדונס",        "Gordons"],
+    ["מאנקי 47",       "Monkey 47"],
+    ["קמפרי",          "Campari"],
+    ["אפרול",          "Aperol"],
+    ["מרטיני",         "Martini"],
+  ];
+  for (const [heb, eng] of map) {
+    if (name.includes(heb))
+      return "https://www.thecocktaildb.com/images/ingredients/" + encodeURIComponent(eng) + "-Small.png";
+  }
+  return null;
+}
+
+// ── Verify an image URL actually loads (browser-native) ──────────────────
+function _verifyImage(url) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload  = () => resolve(url);
+    img.onerror = () => resolve(null);
+    img.src = url;
+  });
+}
+
 // ── Brand → Wikipedia article title mapping ───────────────────────────────
 function _getBrandWikiTitle(name) {
   const map = [
@@ -950,19 +1019,28 @@ async function _doFetch(pid, productName) {
 
   let imageUrl = null;
 
-  // 1. Wikipedia — free, no API key needed
-  const wikiTitle = _getBrandWikiTitle(productName);
-  if (wikiTitle) {
-    imageUrl = await _fetchWikipediaImage(wikiTitle);
-    if (imageUrl) console.log("[Wiki OK]", productName, "→", wikiTitle);
+  // 1. TheCocktailDB (direct URL, no API key, bottle photos)
+  const cdbUrl = _getCocktailDBUrl(productName);
+  if (cdbUrl) {
+    imageUrl = await _verifyImage(cdbUrl);
+    if (imageUrl) console.log("[CDB]", productName, "→", imageUrl);
   }
 
-  // 2. Gemini fallback — needs API key, rate-limited (15 req/min free)
+  // 2. Wikipedia fallback (free, no key)
+  if (!imageUrl) {
+    const wikiTitle = _getBrandWikiTitle(productName);
+    if (wikiTitle) {
+      imageUrl = await _fetchWikipediaImage(wikiTitle);
+      if (imageUrl) console.log("[Wiki]", productName, "→", wikiTitle);
+    }
+  }
+
+  // 3. Gemini fallback (requires API key)
   if (!imageUrl) {
     const key = localStorage.getItem("amartef_gcs_key") || "";
     if (key) {
-      imageUrl = await _fetchGeminiImage(productName, key);
-      if (imageUrl) console.log("[Gemini OK]", productName, "→", imageUrl);
+      imageUrl = await _fetchGeminiImage(pid, productName, key);
+      if (imageUrl) console.log("[Gemini]", productName, "→", imageUrl);
     }
   }
 

@@ -852,63 +852,89 @@ function _genBottleSvg(productName, cat) {
   return 'data:image/svg+xml,' + encodeURIComponent(svg);
 }
 
-// ── Brand → TheCocktailDB direct bottle image (no API key) ──────────────
-function _getCocktailDBUrl(name) {
+// ── Brand → real bottle/product image URL ────────────────────────────────
+// Sources: TheCocktailDB CDN + Wikimedia Commons direct hotlinks (no API)
+function _getBrandImageUrl(name) {
   const map = [
-    ["אבסולוט",        "Absolut Vodka"],
-    ["סמירנוף",        "Smirnoff"],
-    ["גריי גוס",       "Grey Goose"],
-    ["בלבדר",          "Belvedere Vodka"],
-    ["קטל וואן",       "Ketel One"],
-    ["סירוק",          "Ciroc"],
-    ["קריסטל הד",      "Crystal Head Vodka"],
-    ["פינלנדיה",       "Finlandia"],
-    ["סטוליצ'נאיה",    "Stolichnaya"],
-    ["רוסיאן סטנדרט",  "Russian Standard"],
-    ["ג'וני ווקר",     "Johnnie Walker"],
-    ["ג'ק דניאלס",     "Jack Daniels"],
-    ["צ'יבס ריגל",     "Chivas Regal"],
-    ["ג'יימסון",       "Jameson"],
-    ["גלנפידיך",       "Glenfiddich"],
-    ["גלנליבט",        "Glenlivet"],
-    ["מאנקי שולדר",    "Monkey Shoulder"],
-    ["בלנטיינס",       "Ballantines"],
-    ["דיוורס",         "Dewars"],
-    ["פיימס גראוס",    "Famous Grouse"],
-    ["גרנטס",          "Grants"],
-    ["לפרויג",         "Laphroaig"],
-    ["מייקרס מארק",    "Makers Mark"],
-    ["ג'ים ביים",      "Jim Beam"],
-    ["ווילד טרקי",     "Wild Turkey"],
-    ["טולמור דיו",     "Tullamore Dew"],
-    ["בקארדי",         "Bacardi"],
-    ["בקרדי",          "Bacardi"],
-    ["קפטן מורגן",     "Captain Morgan"],
-    ["הוואנה קלאב",    "Havana Club"],
-    ["דיפלומטיקו",     "Diplomatico Rum"],
-    ["מליבו",          "Malibu"],
-    ["אפלטון",         "Appleton Estate"],
-    ["חוסה קוארבו",    "Jose Cuervo"],
-    ["אולמקה",         "Olmeca"],
-    ["פטרון",          "Patron Tequila"],
-    ["1800",           "1800 Tequila"],
-    ["אספולון",        "Espolon"],
-    ["דון חוליו",      "Don Julio"],
-    ["הנדריקס",        "Hendricks Gin"],
-    ["טנקראי",         "Tanqueray"],
-    ["בומביי",         "Bombay Sapphire"],
-    ["ביפיטר",         "Beefeater"],
-    ["גורדונס",        "Gordons"],
-    ["מאנקי 47",       "Monkey 47"],
-    ["קמפרי",          "Campari"],
-    ["אפרול",          "Aperol"],
-    ["מרטיני",         "Martini"],
+    // Hebrew keyword → direct image URL
+    ["אבסולוט",        "https://www.thecocktaildb.com/images/ingredients/Absolut%20Vodka-Medium.png"],
+    ["סמירנוף",        "https://upload.wikimedia.org/wikipedia/en/thumb/0/0d/Smirnoff.svg/220px-Smirnoff.svg.png"],
+    ["גריי גוס",       "https://upload.wikimedia.org/wikipedia/en/thumb/7/7a/Grey_Goose_%28vodka%2C_logo%29.svg/220px-Grey_Goose_%28vodka%2C_logo%29.svg.png"],
+    ["בלבדר",          "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Belvedere_Vodka.jpg/220px-Belvedere_Vodka.jpg"],
+    ["קטל וואן",       "https://upload.wikimedia.org/wikipedia/en/7/7e/Logo-ketel-one.png"],
+    ["סירוק",          "https://upload.wikimedia.org/wikipedia/en/e/ef/C%C3%AEroc_vodka.jpg"],
+    ["קריסטל הד",      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/CHV_Original.tif/lossy-page1-220px-CHV_Original.tif.jpg"],
+    ["סטוליצ'נאיה",    "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Anchorage_Alaska_Museum_Russia_Exhibit_-_Stolichnaya_vodka.jpg/220px-Anchorage_Alaska_Museum_Russia_Exhibit_-_Stolichnaya_vodka.jpg"],
+    ["פינלנדיה",       "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Finlandia_Classic_vodka.jpg/220px-Finlandia_Classic_vodka.jpg"],
+    ["רוסיאן סטנדרט",  "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Russian-Standard-Logo.svg/220px-Russian-Standard-Logo.svg.png"],
+    ["ג'וני ווקר",     "https://upload.wikimedia.org/wikipedia/en/thumb/3/37/Johnnie_Walker_logo_%282015-present%29.svg/220px-Johnnie_Walker_logo_%282015-present%29.svg.png"],
+    ["ג'ק דניאלס",     "https://www.thecocktaildb.com/images/ingredients/Jack%20Daniels-Medium.png"],
+    ["צ'יבס ריגל",     "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Chivas_image_for_wikipedia.jpg/220px-Chivas_image_for_wikipedia.jpg"],
+    ["ג'יימסון",       "https://upload.wikimedia.org/wikipedia/en/0/06/Jameson_Irish_Whiskey_logo.png"],
+    ["גלנפידיך",       "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Glenfiddich_Distillery_View.jpg/220px-Glenfiddich_Distillery_View.jpg"],
+    ["גלנליבט",        "https://upload.wikimedia.org/wikipedia/en/0/0b/Glenlivet-Logo.jpg"],
+    ["מאנקי שולדר",    "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Monkey_Shoulder_whisky.jpg/220px-Monkey_Shoulder_whisky.jpg"],
+    ["בלנטיינס",       "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Ballantines_Finest.jpg/220px-Ballantines_Finest.jpg"],
+    ["דיוורס",         "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Dewars_white_label.jpg/220px-Dewars_white_label.jpg"],
+    ["פיימס גראוס",    "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Famous_Grouse.JPG/220px-Famous_Grouse.JPG"],
+    ["גרנטס",          "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Grants_whisky.jpg/220px-Grants_whisky.jpg"],
+    ["לפרויג",         "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Laphroaig_10_year_old.jpg/220px-Laphroaig_10_year_old.jpg"],
+    ["מייקרס מארק",    "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Makers-mark-bottle.jpg/220px-Makers-mark-bottle.jpg"],
+    ["ג'ים ביים",      "https://www.thecocktaildb.com/images/ingredients/Jim%20Beam-Medium.png"],
+    ["ווילד טרקי",     "https://www.thecocktaildb.com/images/ingredients/Wild%20Turkey-Medium.png"],
+    ["טולמור דיו",     "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Tullamore_Dew_Whiskey.jpg/220px-Tullamore_Dew_Whiskey.jpg"],
+    ["בקארדי",         "https://www.thecocktaildb.com/images/ingredients/Bacardi-Medium.png"],
+    ["בקרדי",          "https://www.thecocktaildb.com/images/ingredients/Bacardi-Medium.png"],
+    ["קפטן מורגן",     "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Captain_Morgan_Spiced_rum.jpg/220px-Captain_Morgan_Spiced_rum.jpg"],
+    ["הוואנה קלאב",    "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Havana_Club_3_Anejo.jpg/220px-Havana_Club_3_Anejo.jpg"],
+    ["דיפלומטיקו",     "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Diplomatico_Reserva_Exclusiva.jpg/220px-Diplomatico_Reserva_Exclusiva.jpg"],
+    ["מליבו",          "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Malibu_rum.jpg/220px-Malibu_rum.jpg"],
+    ["אפלטון",         "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Appleton_Estate_Reserve.jpg/220px-Appleton_Estate_Reserve.jpg"],
+    ["חוסה קוארבו",    "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Jose_Cuervo_Especial.jpg/220px-Jose_Cuervo_Especial.jpg"],
+    ["אולמקה",         "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Olmeca_tequila.jpg/220px-Olmeca_tequila.jpg"],
+    ["פטרון",          "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/PatronGoldBottle.jpg/220px-PatronGoldBottle.jpg"],
+    ["1800",           "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/1800_Tequila.jpg/220px-1800_Tequila.jpg"],
+    ["אספולון",        "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Espolon_Tequila.jpg/220px-Espolon_Tequila.jpg"],
+    ["דון חוליו",      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Don_Julio_1942.jpg/220px-Don_Julio_1942.jpg"],
+    ["הנדריקס",        "https://upload.wikimedia.org/wikipedia/en/thumb/c/c6/Hendricks_Gin_Logo.jpg/220px-Hendricks_Gin_Logo.jpg"],
+    ["טנקראי",         "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Tanqueray_London_Dry_Gin.jpg/220px-Tanqueray_London_Dry_Gin.jpg"],
+    ["בומביי",         "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Bombay_Sapphire_-_bouteilles.JPG/220px-Bombay_Sapphire_-_bouteilles.JPG"],
+    ["ביפיטר",         "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/BEEFEATER2022_%28cropped%29.jpg/220px-BEEFEATER2022_%28cropped%29.jpg"],
+    ["גורדונס",        "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Gordons_London_Dry_Gin_im_Regal.jpg/220px-Gordons_London_Dry_Gin_im_Regal.jpg"],
+    ["בוטניסט",        "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/The_Botanist_Islay_Dry_Gin.jpg/220px-The_Botanist_Islay_Dry_Gin.jpg"],
+    ["מאנקי 47",       "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Monkey_47_Gin.jpg/220px-Monkey_47_Gin.jpg"],
+    ["רוקו",           "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Roku_Gin.jpg/220px-Roku_Gin.jpg"],
+    ["מואה שאנדון",    "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Mo%C3%ABt_et_Chandon.jpg/220px-Mo%C3%ABt_et_Chandon.jpg"],
+    ["וב קליקו",       "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Logo_Veuve_Clicquot.png/220px-Logo_Veuve_Clicquot.png"],
+    ["מום",            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Mumm_Champagne.jpg/220px-Mumm_Champagne.jpg"],
+    ["מרטיני",         "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/15-09-26-RalfR-WLC-0084.jpg/220px-15-09-26-RalfR-WLC-0084.jpg"],
+    ["פרשינט",         "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Freixenet_Cordon_Negro.jpg/220px-Freixenet_Cordon_Negro.jpg"],
+    ["קמפרי",          "https://www.thecocktaildb.com/images/ingredients/Campari-Medium.png"],
+    ["אפרול",          "https://www.thecocktaildb.com/images/ingredients/Aperol-Medium.png"],
+    ["ואן גוך",        "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Vincent_van_Gogh_-_Self-portrait_with_grey_felt_hat_-_Google_Art_Project.jpg/220px-Vincent_van_Gogh_-_Self-portrait_with_grey_felt_hat_-_Google_Art_Project.jpg"],
+    ["ערק",            "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Arak_bottle.jpg/220px-Arak_bottle.jpg"],
   ];
-  for (const [heb, eng] of map) {
-    if (name.includes(heb))
-      return "https://www.thecocktaildb.com/images/ingredients/" + encodeURIComponent(eng) + "-Small.png";
+  for (const [heb, url] of map) {
+    if (name.includes(heb)) return url;
   }
   return null;
+}
+
+// ── Category → real generic bottle photo (TheCocktailDB ingredients CDN) ──
+function _getCatRealImage(cat) {
+  const m = {
+    "וודקה":   "Vodka",
+    "ויסקי":   "Whiskey",
+    "ג'ין":    "Gin",
+    "רום":     "Rum",
+    "טקילה":  "Tequila",
+    "שמפניה": "Champagne",
+    "אפריטיף":"Campari",
+    "ואן גוך": "Vodka",
+    "ערק":     "Ouzo",
+  };
+  const ing = m[cat];
+  return ing ? "https://www.thecocktaildb.com/images/ingredients/" + encodeURIComponent(ing) + "-Medium.png" : null;
 }
 
 // ── Verify an image URL actually loads (browser-native) ──────────────────
@@ -1033,52 +1059,40 @@ async function _fetchGeminiImage(productName, key, attempt) {
 }
 
 async function _doFetch(pid, productName, cat) {
-  // Cached?
   if (imageCache[pid]) {
     const el = document.getElementById("img_" + pid);
     if (el) el.src = imageCache[pid];
     return;
   }
 
-  // STEP 1: Generate SVG bottle IMMEDIATELY — guaranteed, no network.
-  // This is what gets cached and displayed. Always succeeds.
-  const svgUrl = _genBottleSvg(productName, cat);
-  imageCache[pid] = svgUrl;
+  let imageUrl = null;
+
+  // 1. Brand-specific real product photo
+  const brandUrl = _getBrandImageUrl(productName);
+  if (brandUrl) {
+    imageUrl = await _verifyImage(brandUrl);
+    if (imageUrl) console.log("[Brand]", productName);
+  }
+
+  // 2. Category fallback — real generic bottle photo
+  if (!imageUrl && cat) {
+    const catUrl = _getCatRealImage(cat);
+    if (catUrl) {
+      imageUrl = await _verifyImage(catUrl);
+      if (imageUrl) console.log("[Cat]", productName, "→", cat);
+    }
+  }
+
+  // 3. Last resort — SVG bottle (only if all real photos failed)
+  if (!imageUrl) {
+    imageUrl = _genBottleSvg(productName, cat);
+    console.log("[SVG fallback]", productName);
+  }
+
+  imageCache[pid] = imageUrl;
   try { saveImageCache(); } catch(e) {}
   const el = document.getElementById("img_" + pid);
-  if (el) el.src = svgUrl;
-  console.log("[SVG]", productName, "(cat:" + (cat||"?") + ")");
-
-  // STEP 2: Try to upgrade to TheCocktailDB brand image (best effort)
-  try {
-    const cdbUrl = _getCocktailDBUrl(productName);
-    if (cdbUrl) {
-      const verified = await _verifyImage(cdbUrl);
-      if (verified) {
-        imageCache[pid] = verified;
-        try { saveImageCache(); } catch(e) {}
-        const el2 = document.getElementById("img_" + pid);
-        if (el2) el2.src = verified;
-        console.log("[CDB upgrade]", productName, "→", verified);
-        return;
-      }
-    }
-  } catch(e) { /* ignore */ }
-
-  // STEP 3: Try Gemini upgrade (requires key)
-  try {
-    const key = localStorage.getItem("amartef_gcs_key") || "";
-    if (key) {
-      const gem = await _fetchGeminiImage(pid, productName, key);
-      if (gem) {
-        imageCache[pid] = gem;
-        try { saveImageCache(); } catch(e) {}
-        const el3 = document.getElementById("img_" + pid);
-        if (el3) el3.src = gem;
-        console.log("[Gemini upgrade]", productName);
-      }
-    }
-  } catch(e) { /* ignore */ }
+  if (el) el.src = imageUrl;
 }
 async function fetchBottleImage(pid, productName, cat) {
   if (imageCache[pid]) {

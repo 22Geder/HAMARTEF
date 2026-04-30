@@ -1,4 +1,4 @@
-const CACHE_NAME = 'amartef-v12';
+const CACHE_NAME = 'amartef-v13';
 const ASSETS = [
   './',
   './index.html',
@@ -28,3 +28,4 @@ self.addEventListener('fetch', e => {
     caches.match(e.request).then(cached => cached || fetch(e.request))
   );
 });
+

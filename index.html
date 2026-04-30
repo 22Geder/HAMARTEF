@@ -184,8 +184,8 @@
     .p-buy b { color: var(--text); }
     .p-sell-lbl { color: var(--gold); font-weight: 800; font-size: 0.82rem; }
 
-    .sell-row { display: flex; align-items: center; gap: 5px; }
-    .sell-row label { font-size: 0.69rem; color: var(--muted); white-space: nowrap; }
+    .sell-row { display: flex; align-items: center; gap: 4px; }
+    .sell-row label { font-size: 0.65rem; color: var(--muted); white-space: nowrap; min-width: 36px; text-align: right; }
     .buy-inp { border-color: rgba(176,138,42,0.45) !important; color: var(--amber) !important; }
     .buy-inp:focus { border-color: var(--gold) !important; }
     .sell-inp { flex: 1; padding: 5px 6px; border-radius: 7px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 0.8rem; font-family: 'Heebo',Arial,sans-serif; text-align: center; transition: border-color 0.15s; }
@@ -830,6 +830,22 @@ function _pumpQueue() {
     setTimeout(_pumpQueue, IMG_DELAY_MS);
   });
 }
+// ── Category → TheCocktailDB generic spirit image ───────────────────────
+function _getCatCDBUrl(cat) {
+  const m = {
+    "וודקה":    "Vodka",
+    "ויסקי":    "Whiskey",
+    "ג'ין":     "Gin",
+    "רום":      "Rum",
+    "טקילה":   "Tequila",
+    "שמפניה":  "Champagne",
+    "אפריטיף": "Campari",
+    "ואן גוך":  "Vodka",
+  };
+  const ing = m[cat];
+  return ing ? "https://www.thecocktaildb.com/images/ingredients/" + encodeURIComponent(ing) + "-Small.png" : null;
+}
+
 // ── Brand → TheCocktailDB direct bottle image (no API key) ──────────────
 function _getCocktailDBUrl(name) {
   const map = [
@@ -1010,7 +1026,7 @@ async function _fetchGeminiImage(productName, key, attempt) {
   } catch(e) { return null; }
 }
 
-async function _doFetch(pid, productName) {
+async function _doFetch(pid, productName, cat) {
   if (imageCache[pid]) {
     const el = document.getElementById("img_" + pid);
     if (el) el.src = imageCache[pid];
@@ -1019,11 +1035,20 @@ async function _doFetch(pid, productName) {
 
   let imageUrl = null;
 
-  // 1. TheCocktailDB (direct URL, no API key, bottle photos)
+  // 1. TheCocktailDB brand-specific
   const cdbUrl = _getCocktailDBUrl(productName);
   if (cdbUrl) {
     imageUrl = await _verifyImage(cdbUrl);
-    if (imageUrl) console.log("[CDB]", productName, "→", imageUrl);
+    if (imageUrl) console.log("[CDB brand]", productName, "→", imageUrl);
+  }
+
+  // 1b. TheCocktailDB category fallback (Vodka / Whiskey / Gin etc.)
+  if (!imageUrl && cat) {
+    const catUrl = _getCatCDBUrl(cat);
+    if (catUrl) {
+      imageUrl = await _verifyImage(catUrl);
+      if (imageUrl) console.log("[CDB cat]", productName, "→", cat);
+    }
   }
 
   // 2. Wikipedia fallback (free, no key)
@@ -1053,13 +1078,13 @@ async function _doFetch(pid, productName) {
     console.warn("[img] No image found for", productName);
   }
 }
-async function fetchBottleImage(pid, productName) {
+async function fetchBottleImage(pid, productName, cat) {
   if (imageCache[pid]) {
     const el = document.getElementById("img_" + pid);
     if (el) el.src = imageCache[pid];
     return;
   }
-  enqueueBottleImage(pid, productName);
+  enqueueBottleImage(pid, productName, cat);
 }
 
 // ─── SETTINGS ───────────────────────────────────────────────────────
@@ -1182,12 +1207,12 @@ function renderProducts() {
         <img id="img_${p.id}" class="p-bottle" src="${bottleSVG(p.cat, p.id)}" alt="${p.name}" onerror="this.src='${bottleSVG(p.cat, p.id)}'" />
         <div class="p-name">${p.name}</div>
         <div class="sell-row">
-          <label>💰 קנייה:</label>
+          <label>קנייה:</label>
           <input class="sell-inp buy-inp" type="number" min="0" id="bi_${p.id}" value="${customBuy}"
             onchange="onBuyChange(${p.id},this.value)" />
         </div>
         <div class="sell-row">
-          <label>🏷️ מכירה:</label>
+          <label>מכירה:</label>
           <input class="sell-inp" type="number" min="0" id="si_${p.id}" value="${customSell}"
             onchange="onSellChange(${p.id},this.value)" />
         </div>
@@ -1202,7 +1227,7 @@ function renderProducts() {
       `;
       grid.appendChild(card);
       // Fetch bottle image (uses cache or queues API call)
-      if (!imageCache[p.id]) fetchBottleImage(p.id, p.name);
+      if (!imageCache[p.id]) fetchBottleImage(p.id, p.name, p.cat);
       else { const el = document.getElementById('img_'+p.id); if(el) el.src=imageCache[p.id]; }
     });
     con.appendChild(grid);

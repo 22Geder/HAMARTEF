@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background: dark walnut -->
+  <rect width="512" height="512" fill="#1c0e01"/>
+  <!-- Outer gold frame -->
+  <rect x="14" y="14" width="484" height="484" fill="none" stroke="#b08a2a" stroke-width="5" rx="28"/>
+  <rect x="22" y="22" width="468" height="468" fill="none" stroke="#d4a843" stroke-width="1.5" rx="22"/>
+
+  <!-- Whisky Tumbler Glass -->
+  <!-- Glass body (B&W structure) -->
+  <polygon points="158,86 354,86 316,328 196,328"
+           fill="rgba(255,255,255,0.04)"
+           stroke="rgba(255,255,255,0.28)" stroke-width="5" stroke-linejoin="round"/>
+
+  <!-- Whisky liquid — AMBER COLOR (the colored part) -->
+  <polygon points="166,234 346,234 316,328 196,328" fill="#c9820a" opacity="0.93"/>
+  <!-- Liquid shimmer -->
+  <line x1="166" y1="234" x2="346" y2="234" stroke="#d4a843" stroke-width="3.5"/>
+  <!-- Amber glow inside -->
+  <polygon points="190,270 322,270 316,328 196,328" fill="#a06010" opacity="0.35"/>
+
+  <!-- Ice cubes — white/silver (B&W) -->
+  <rect x="188" y="126" width="70" height="68" rx="11"
+        fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.42)" stroke-width="2.5"/>
+  <rect x="272" y="136" width="56" height="56" rx="9"
+        fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.34)" stroke-width="2"/>
+  <!-- Ice highlights -->
+  <line x1="196" y1="138" x2="216" y2="158" stroke="rgba(255,255,255,0.28)" stroke-width="2"/>
+  <line x1="280" y1="146" x2="296" y2="162" stroke="rgba(255,255,255,0.22)" stroke-width="1.5"/>
+
+  <!-- Glass rim (B&W) -->
+  <rect x="150" y="76" width="212" height="18" rx="9"
+        fill="rgba(255,255,255,0.09)" stroke="rgba(255,255,255,0.38)" stroke-width="3"/>
+
+  <!-- Glass base (B&W) -->
+  <rect x="188" y="328" width="136" height="13" rx="6.5" fill="rgba(255,255,255,0.28)"/>
+  <rect x="176" y="341" width="160" height="8" rx="4" fill="rgba(255,255,255,0.13)"/>
+
+  <!-- Decorative divider -->
+  <line x1="68" y1="390" x2="208" y2="390" stroke="#b08a2a" stroke-width="1.5"/>
+  <line x1="304" y1="390" x2="444" y2="390" stroke="#b08a2a" stroke-width="1.5"/>
+  <circle cx="256" cy="390" r="5" fill="#b08a2a"/>
+
+  <!-- AMARTEF -->
+  <text x="256" y="438"
+        text-anchor="middle"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-size="58" font-weight="bold"
+        fill="#d4a843" letter-spacing="4">AMARTEF</text>
+
+  <!-- ALCOHOL HOUSE -->
+  <text x="256" y="468"
+        text-anchor="middle"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-size="19" fill="#8a7050" letter-spacing="7">ALCOHOL HOUSE</text>
+</svg>

@@ -1,0 +1,8 @@
+# Python helper scripts (not needed for deployment)
+*.py
+*.bak
+_check_syntax.js
+server.js
+node_modules/
+.DS_Store
+Thumbs.db

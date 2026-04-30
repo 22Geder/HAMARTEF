@@ -1,4 +1,4 @@
-const CACHE_NAME = 'amartef-v25';
+const CACHE_NAME = 'amartef-v26';
 const ASSETS = [
   './',
   './index.html',

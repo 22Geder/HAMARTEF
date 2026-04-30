@@ -830,33 +830,150 @@ function _pumpQueue() {
     setTimeout(_pumpQueue, IMG_DELAY_MS);
   });
 }
-async function _doFetch(pid, productName, retryDelay) {
-  const key = localStorage.getItem('amartef_gcs_key');
-  if (!key) return;
-  retryDelay = retryDelay || 5000;
+// ── Brand → Wikipedia article title mapping ───────────────────────────────
+function _getBrandWikiTitle(name) {
+  const map = [
+    ["אבסולוט",        "Absolut Vodka"],
+    ["סמירנוף",        "Smirnoff"],
+    ["גריי גוס",       "Grey Goose (vodka)"],
+    ["בלבדר",          "Belvedere vodka"],
+    ["קטל וואן",       "Ketel One"],
+    ["סירוק",          "Ciroc"],
+    ["קריסטל הד",      "Crystal Head Vodka"],
+    ["פינלנדיה",       "Finlandia (vodka)"],
+    ["סטוליצ'נאיה",    "Stolichnaya"],
+    ["רוסיאן סטנדרט",  "Russian Standard (vodka)"],
+    ["ג'וני ווקר",     "Johnnie Walker"],
+    ["ג'ק דניאלס",     "Jack Daniel's"],
+    ["צ'יבס ריגל",     "Chivas Regal"],
+    ["ג'יימסון",       "Jameson whiskey"],
+    ["גלנפידיך",       "Glenfiddich"],
+    ["גלנליבט",        "The Glenlivet"],
+    ["מאנקי שולדר",    "Monkey Shoulder"],
+    ["בלנטיינס",       "Ballantine's"],
+    ["דיוורס",         "Dewar's"],
+    ["פיימס גראוס",    "The Famous Grouse"],
+    ["גרנטס",          "Grant's whisky"],
+    ["ויליאם לוסון",   "William Lawson's"],
+    ["לפרויג",         "Laphroaig"],
+    ["מייקרס מארק",    "Maker's Mark"],
+    ["ג'ים ביים",      "Jim Beam"],
+    ["ווילד טרקי",     "Wild Turkey (bourbon)"],
+    ["טולמור דיו",     "Tullamore D.E.W."],
+    ["רויאל סאלוט",    "Royal Salute whisky"],
+    ["ואן גוך",        "Van Gogh Vodka"],
+    ["הנדריקס",        "Hendrick's Gin"],
+    ["טנקראי",         "Tanqueray"],
+    ["בומביי",         "Bombay Sapphire"],
+    ["ביפיטר",         "Beefeater gin"],
+    ["גורדונס",        "Gordon's gin"],
+    ["בוטניסט",        "The Botanist (gin)"],
+    ["מאנקי 47",       "Monkey 47"],
+    ["רוקו",           "Roku gin"],
+    ["בקארדי",         "Bacardi"],
+    ["קפטן מורגן",     "Captain Morgan"],
+    ["הוואנה קלאב",    "Havana Club"],
+    ["דיפלומטיקו",     "Diplomatico"],
+    ["מליבו",          "Malibu (rum)"],
+    ["אפלטון",         "Appleton Estate"],
+    ["חוסה קוארבו",    "Jose Cuervo"],
+    ["אולמקה",         "Olmeca (tequila)"],
+    ["פטרון",          "Patron"],
+    ["1800",           "1800 Tequila"],
+    ["אספולון",        "Espolon"],
+    ["דון חוליו",      "Don Julio"],
+    ["קלאסה אזול",     "Clase Azul"],
+    ["מואה שאנדון",    "Moet & Chandon"],
+    ["וב קליקו",       "Veuve Clicquot"],
+    ["מום קורדון",     "G.H. Mumm"],
+    ["פרשינט",         "Freixenet"],
+    ["קמפרי",          "Campari"],
+    ["אפרול",          "Aperol"],
+    ["מרטיני",         "Martini (vermouth)"],
+  ];
+  for (const [heb, eng] of map) {
+    if (name.includes(heb)) return eng;
+  }
+  return null;
+}
+
+// ── Wikipedia free image lookup (no key needed) ───────────────────────────
+async function _fetchWikipediaImage(wikiTitle) {
   try {
-    const prompt = `Find a real product image of the bottle: ${productName}. Return only the direct URL of a jpg or png image.`;
-    const res = await fetch(
+    const url = "https://en.wikipedia.org/w/api.php?action=query" +
+      "&prop=pageimages&format=json&pithumbsize=400&origin=*" +
+      "&titles=" + encodeURIComponent(wikiTitle);
+    const r = await fetch(url);
+    const d = await r.json();
+    const pages = Object.values(d?.query?.pages || {});
+    return pages[0]?.thumbnail?.source || null;
+  } catch(e) { return null; }
+}
+
+// ── Gemini fallback (rate-limited but free) ───────────────────────────────
+async function _fetchGeminiImage(productName, key, attempt) {
+  attempt = attempt || 1;
+  if (attempt > 3) return null;
+  try {
+    const prompt = `Find a direct image URL (ending in .jpg .jpeg .png or .webp) ` +
+      `for the alcohol bottle: "${productName}". ` +
+      `Return ONLY the raw URL, nothing else.`;
+    const resp = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
-      { method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ contents:[{parts:[{text:prompt}]}], tools:[{google_search:{}}] }) }
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          tools: [{ google_search: {} }]
+        })
+      }
     );
-    if (res.status === 429) {
-      // Rate limited — re-queue after delay (up to 30s)
-      const wait = Math.min(retryDelay, 30000);
+    if (resp.status === 429) {
+      const wait = Math.min(attempt * 12000, 60000);
       await new Promise(r => setTimeout(r, wait));
-      return _doFetch(pid, productName, retryDelay * 2);
+      return _fetchGeminiImage(productName, key, attempt + 1);
     }
-    const data = await res.json();
-    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    const m = text.match(/https?:\/\/\S+\.(?:jpg|jpeg|png|webp)/i);
-    if (m) {
-      imageCache[pid] = m[0];
-      saveImageCache();
-      const el = document.getElementById("img_" + pid);
-      if (el) el.src = m[0];
+    const data = await resp.json();
+    const text = (data?.candidates?.[0]?.content?.parts || []).map(p => p.text || "").join(" ");
+    const m = text.match(/https?:\/\/[^\s"'<>\]]+\.(?:jpg|jpeg|png|webp)(?:\?[^\s"'<>\]]*)?/i);
+    return m ? m[0] : null;
+  } catch(e) { return null; }
+}
+
+async function _doFetch(pid, productName) {
+  if (imageCache[pid]) {
+    const el = document.getElementById("img_" + pid);
+    if (el) el.src = imageCache[pid];
+    return;
+  }
+
+  let imageUrl = null;
+
+  // 1. Wikipedia — free, no API key needed
+  const wikiTitle = _getBrandWikiTitle(productName);
+  if (wikiTitle) {
+    imageUrl = await _fetchWikipediaImage(wikiTitle);
+    if (imageUrl) console.log("[Wiki OK]", productName, "→", wikiTitle);
+  }
+
+  // 2. Gemini fallback — needs API key, rate-limited (15 req/min free)
+  if (!imageUrl) {
+    const key = localStorage.getItem("amartef_gcs_key") || "";
+    if (key) {
+      imageUrl = await _fetchGeminiImage(productName, key);
+      if (imageUrl) console.log("[Gemini OK]", productName, "→", imageUrl);
     }
-  } catch(e) {}
+  }
+
+  if (imageUrl) {
+    imageCache[pid] = imageUrl;
+    try { saveImageCache(); } catch(e) {}
+    const el = document.getElementById("img_" + pid);
+    if (el) el.src = imageUrl;
+  } else {
+    console.warn("[img] No image found for", productName);
+  }
 }
 async function fetchBottleImage(pid, productName) {
   if (imageCache[pid]) {

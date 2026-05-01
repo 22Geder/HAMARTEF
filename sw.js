@@ -1,10 +1,10 @@
-const CACHE_NAME = 'amartef-v33';
+﻿const CACHE_NAME = 'amartef-v34';
 const STATIC_ASSETS = [
   './icon.svg',
   './manifest.json'
 ];
 
-// HTML files – always network-first so users always get latest version
+// HTML files ג€“ always network-first so users always get latest version
 const HTML_FILES = ['/', '/index.html', '/supplier-order.html', './index.html', './supplier-order.html'];
 
 self.addEventListener('install', e => {
@@ -25,7 +25,7 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
-  // Network-first for HTML pages – always serve fresh content
+  // Network-first for HTML pages ג€“ always serve fresh content
   if (e.request.mode === 'navigate' || url.pathname.endsWith('.html') || url.pathname === '/') {
     e.respondWith(
       fetch(e.request).catch(() => caches.match(e.request))

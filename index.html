@@ -451,15 +451,13 @@
 
     <div class="totals" id="totalsSection" style="display:none">
       <div id="totQuote">
-        <div class="trow"><span>סה"כ קנייה (ללא מע"מ):</span>  <span id="tBuy">₪0.00</span></div>
-        <div class="trow"><span>סה"כ מכירה (ללא מע"מ):</span> <span id="tSell">₪0.00</span></div>
-        <div class="trow"><span>מע"מ 17%:</span>              <span id="tVat">₪0.00</span></div>
+        <div class="trow"><span>סה"כ קנייה:</span>  <span id="tBuy">₪0.00</span></div>
+        <div class="trow"><span>סה"כ מכירה:</span> <span id="tSell">₪0.00</span></div>
         <div class="trow big"><span>💰 סה"כ לתשלום ללקוח:</span><span id="tTotal">₪0.00</span></div>
       </div>
       <div id="totOrder" style="display:none">
-        <div class="trow"><span>סה"כ הזמנה (ללא מע"מ):</span><span id="oBuy">₪0.00</span></div>
-        <div class="trow"><span>מע"מ 17%:</span>             <span id="oVat">₪0.00</span></div>
-        <div class="trow big"><span>📦 סה"כ לספק (כולל מע"מ):</span><span id="oTotal">₪0.00</span></div>
+        <div class="trow"><span>סה"כ הזמנה:</span><span id="oBuy">₪0.00</span></div>
+        <div class="trow big"><span>📦 סה"כ לספק:</span><span id="oTotal">₪0.00</span></div>
       </div>
     </div>
 
@@ -527,7 +525,7 @@
 // ================================================================
 // קבועים
 // ================================================================
-const VAT = 0.17;
+const VAT = 0;
 
 const ICON = {
   "וודקה":       "🍸",
@@ -1582,8 +1580,6 @@ function sendWhatsApp() {
     msg    += "\n━━━━━━━━━━━━━━━━━━━\n";
     msg    += "*פירוט הזמנה:*\n" + lines + "\n";
     msg    += "━━━━━━━━━━━━━━━━━━━\n";
-    msg    += "💵 סה\"כ ללא מע\"מ: ₪" + tBuy.toFixed(2) + "\n";
-    msg    += "🧾 מע\"מ 17%: ₪" + oVat.toFixed(2) + "\n";
     msg    += "💰 *סה\"כ לספק: ₪" + oTotal.toFixed(2) + "*\n";
     if (notes) msg += "\n📝 " + notes + "\n";
     msg    += "\nAMARTEF House Of Alcohol 🥃";
@@ -1624,8 +1620,6 @@ function sendWhatsApp() {
   msg    += "\n━━━━━━━━━━━━━━━━━━━\n";
   msg    += "*פירוט הזמנה:*\n" + lines + "\n";
   msg    += "━━━━━━━━━━━━━━━━━━━\n";
-  msg    += "💵 לפני מע\"מ: ₪" + tSell.toFixed(2) + "\n";
-  msg    += "🧾 מע\"מ 17%: ₪" + vat.toFixed(2) + "\n";
   msg    += "💰 *סה\"כ לתשלום: ₪" + total.toFixed(2) + "*\n";
   if (notes) msg += "\n📝 " + notes + "\n";
   msg    += "\nבברכה, צוות AMARTEF 🙏";
@@ -1758,12 +1752,10 @@ tbody td{padding:7px 8px;border-bottom:1px solid #eee}
 <div class="meta">
   <div class="mb"><h3>לקוח</h3><p>${name}</p>${phone?`<p class="sub">📞 ${phone}</p>`:""}${city?`<p class="sub">📍 ${city}</p>`:""}</div>
   <div class="mb"><h3>פרטי הצעה</h3><p>מס׳ ${qNum}</p><p class="sub">📅 ${date}</p></div>
-  <div class="mb total-box"><h3>סה"כ לתשלום</h3><p>₪${total.toFixed(2)}</p><p class="sub">כולל מע"מ 17%</p></div>
+  <div class="mb total-box"><h3>סה"כ לתשלום</h3><p>₪${total.toFixed(2)}</p></div>
 </div>
 <table><thead><tr><th style="width:32px">#</th><th style="text-align:right">מוצר</th><th>כמות</th><th>מחיר ליח׳</th><th>סה"כ</th></tr></thead><tbody>${rows}</tbody></table>
 <div class="totals-blk"><div class="totals-inner">
-  <div class="tr"><span>סה"כ לפני מע"מ:</span><span>₪${tSell.toFixed(2)}</span></div>
-  <div class="tr"><span>מע"מ 17%:</span><span>₪${vat.toFixed(2)}</span></div>
   <div class="tr big"><span>💰 סה"כ לתשלום:</span><span>₪${total.toFixed(2)}</span></div>
 </div></div>
 ${notes?`<div class="notes-box"><h3>הערות</h3><p>${notes}</p></div>`:""}
@@ -1910,7 +1902,7 @@ function downloadPDF_legacy_DISABLED() {
     <div class="mb total-box">
       <h3>סה"כ לספק</h3>
       <p>₪${oTotal.toFixed(2)}</p>
-      <p class="sub">כולל מע"מ 17%</p>
+      
     </div>
   </div>
   <table>
@@ -1925,8 +1917,6 @@ function downloadPDF_legacy_DISABLED() {
   </table>
   <div class="totals-blk">
     <div class="totals-inner">
-      <div class="tr"><span>סה"כ ללא מע"מ:</span><span>₪${tBuy.toFixed(2)}</span></div>
-      <div class="tr"><span>מע"מ 17%:</span><span>₪${oVat.toFixed(2)}</span></div>
       <div class="tr big"><span>📦 סה"כ לספק:</span><span>₪${oTotal.toFixed(2)}</span></div>
     </div>
   </div>
@@ -2029,7 +2019,7 @@ function downloadPDF_legacy_DISABLED() {
     <div class="mb total-box">
       <h3>סה"כ לתשלום</h3>
       <p>₪${total.toFixed(2)}</p>
-      <p class="sub">כולל מע"מ 17%</p>
+      
     </div>
   </div>
 
@@ -2046,8 +2036,6 @@ function downloadPDF_legacy_DISABLED() {
 
   <div class="totals-blk">
     <div class="totals-inner">
-      <div class="tr"><span>סה"כ לפני מע"מ:</span><span>₪${tSell.toFixed(2)}</span></div>
-      <div class="tr"><span>מע"מ 17%:</span><span>₪${vat.toFixed(2)}</span></div>
       <div class="tr big"><span>💰 סה"כ לתשלום:</span><span>₪${total.toFixed(2)}</span></div>
     </div>
   </div>
@@ -2151,7 +2139,7 @@ function buildHistoryEntry() {
              line: isOrder ? buy : sell };
   });
   if (isOrder) {
-    const total = tBuy + tBuy * VAT;
+    const total = tBuy;
     return {
       timestamp: Date.now(), type: "order",
       id:    document.getElementById("orderNum").value      || "",
@@ -2163,7 +2151,7 @@ function buildHistoryEntry() {
       items, total,
     };
   } else {
-    const total = tSell + tSell * VAT;
+    const total = tSell;
     return {
       timestamp: Date.now(), type: "quote",
       id:    document.getElementById("quoteNum").value    || "",
@@ -2248,7 +2236,7 @@ function renderHistoryModal() {
         ${itemsHtml}
         ${notesHtml}
         <div class="hist-summary-row">
-          <span>סה"כ ${e.type === "order" ? "לספק" : "לתשלום"} (כולל מע"מ 17%)</span>
+          <span>סה"כ ${e.type === "order" ? "לספק" : "לתשלום"}</span>
           <span class="hist-summary-total">₪${(e.total||0).toFixed(2)}</span>
         </div>
       </div>`;

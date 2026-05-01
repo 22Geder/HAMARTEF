@@ -1,4 +1,4 @@
-﻿const CACHE_NAME = 'amartef-v40';
+﻿const CACHE_NAME = 'amartef-v41';
 const STATIC_ASSETS = [
   './icon.svg',
   './manifest.json'

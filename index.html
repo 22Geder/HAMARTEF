@@ -11,6 +11,8 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icon.svg" />
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
+  <!-- html2pdf לאמת הורדת PDF (לא הדפסה) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     :root {
       --gold:   #b08a2a;
@@ -472,6 +474,9 @@
       </div>
       <div class="act-row">
         <button class="abtn abtn-print" onclick="printQuote()">🖨️ הדפסה</button>
+        <button class="abtn abtn-pdf"   onclick="downloadWord()" style="background:linear-gradient(135deg,#1a4d8f,#2b6cb0)">📝 Word לעריכה</button>
+      </div>
+      <div class="act-row">
         <button class="abtn abtn-clear" onclick="clearQuote()">🗑️ נקה הצעה</button>
       </div>
     </div>
@@ -789,11 +794,12 @@ const PRODUCTS = [
   { id:233,cat:"ורמוט", name:"נולי פראט – 750 מ\"ל",            buy:45, sell:70  },
   { id:234,cat:"ורמוט", name:"צ'ינזאנו רוסו – 1 ליטר",         buy:25, sell:40  },
   // ── פרמיום (חדש) ───────────────────────────────────────────────
-  { id:220, cat:"ויסקי",  name:"רויאל סאלוט 21 שנה – 700 מ\"ל",          buy:292,  sell:388,  buyNet:292,  sellMin:388,  sellMax:400  },
-  { id:221, cat:"טקילה",  name:"דון חוליו 1942 – 700 מ\"ל",              buy:373,  sell:533.5, buyNet:373, sellMin:533.5, sellMax:550  },
-  { id:222, cat:"טקילה",  name:"קלאסה אזול אנחו – 700 מ\"ל",            buy:559,  sell:853.5, buyNet:559, sellMin:853.5, sellMax:880  },
-  { id:223, cat:"ערק",    name:"ערק איילה – 750 מ\"ל",                   buy:52.5, sell:63,   buyNet:52.5, sellMin:63,   sellMax:65   },
-  { id:224, cat:"מיקסרים",name:"ארגז XL / Blue – 24 יחידות",              buy:52,   sell:82.5, buyNet:52,   sellMin:82.5, sellMax:85   },
+  // הערה חשובה: ה-ID-ים הוחלפו ל-400+ למניעת התנגשות עם 220-224 (קוניאק/הנסי)
+  { id:400, cat:"ויסקי",  name:"רויאל סאלוט 21 שנה – 700 מ\"ל",          buy:292,  sell:388,  buyNet:292,  sellMin:388,  sellMax:400  },
+  { id:401, cat:"טקילה",  name:"דון חוליו 1942 – 700 מ\"ל",              buy:373,  sell:533.5, buyNet:373, sellMin:533.5, sellMax:550  },
+  { id:402, cat:"טקילה",  name:"קלאסה אזול אנחו – 700 מ\"ל",            buy:559,  sell:853.5, buyNet:559, sellMin:853.5, sellMax:880  },
+  { id:403, cat:"ערק",    name:"ערק איילה – 750 מ\"ל",                   buy:52.5, sell:63,   buyNet:52.5, sellMin:63,   sellMax:65   },
+  { id:404, cat:"מיקסרים",name:"ארגז XL / Blue – 24 יחידות",              buy:52,   sell:82.5, buyNet:52,   sellMin:82.5, sellMax:85   },
 ];
 
 // ================================================================
@@ -1582,9 +1588,213 @@ function sendWhatsApp() {
 }
 
 // ================================================================
-// הורדת PDF – נפתח חלון הדפסה מסוגנן
+// בניית HTML של הצעה/הזמנה — משמש גם ל-PDF, גם ל-Word, גם להדפסה
+// ================================================================
+function buildDocHTML() {
+  if (mode === "order") {
+    const sName  = document.getElementById("supplierName").value  || "ספק";
+    const sPhone = document.getElementById("supplierPhone").value || "";
+    const sAgent = document.getElementById("supplierAgent").value || "";
+    const oNum   = document.getElementById("orderNum").value      || "";
+    const date   = document.getElementById("orderDate").value     || "";
+    const notes  = document.getElementById("notes").value         || "";
+
+    let tBuy = 0;
+    const rows = cart.map((item, i) => {
+      const buy  = item.customBuy ?? item.product.buy;
+      const line = buy * item.qty;
+      tBuy += line;
+      const bg = i % 2 === 0 ? "#f9f9f9" : "#fff";
+      return `<tr style="background:${bg}">
+        <td style="text-align:center;color:#888">${i + 1}</td>
+        <td>${item.product.name}</td>
+        <td style="text-align:center;font-weight:700">${item.qty}</td>
+        <td style="text-align:center">₪${buy.toFixed(2)}</td>
+        <td style="text-align:center;font-weight:700;color:#1a5276">₪${line.toFixed(2)}</td>
+      </tr>`;
+    }).join("");
+    const oVat   = tBuy * VAT;
+    const oTotal = tBuy + oVat;
+    return { title: `הזמנה ${oNum}`, fileBase: `AMARTEF-Order-${oNum||Date.now()}`, html: `<!DOCTYPE html>
+<html dir="rtl" lang="he"><head><meta charset="UTF-8"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{direction:rtl;padding:20mm 16mm 15mm;font-size:10.5pt;color:#111;background:#fff}
+.logo{text-align:center;padding-bottom:14px;border-bottom:3px solid #1a5276;margin-bottom:14px}
+.logo h1{font-size:20pt;font-weight:900;color:#0c0c1a}
+.logo p{color:#999;font-size:8.5pt;margin-top:3px}
+.banner{background:#1a5276;color:#fff;border-radius:8px;padding:9px 16px;text-align:center;font-size:11pt;font-weight:700;margin-bottom:14px}
+.meta{display:flex;gap:10px;margin-bottom:18px}
+.mb{flex:1;background:#f5f5f5;border:1px solid #e0e0e0;border-radius:8px;padding:10px 13px}
+.mb h3{font-size:7.5pt;color:#999;letter-spacing:0.6px;margin-bottom:5px}
+.mb p{font-size:10pt;font-weight:700}
+.mb .sub{font-size:8.5pt;color:#666;font-weight:400;margin-top:2px}
+.total-box{background:#1a5276;color:#fff}
+.total-box h3{color:#7ec8e3}.total-box p{color:#7dffb3;font-size:14pt}.total-box .sub{color:#aaa}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:9.5pt}
+thead tr{background:#1a5276}thead th{color:#fff;padding:9px 8px;font-weight:700;font-size:9pt}
+tbody td{padding:7px 8px;border-bottom:1px solid #eee}
+.totals-blk{display:flex;justify-content:flex-end;margin-top:10px}
+.totals-inner{border:2px solid #1a5276;border-radius:10px;padding:12px 16px;width:52%}
+.tr{display:flex;justify-content:space-between;padding:3px 0;font-size:9.5pt;color:#555}
+.tr span:last-child{font-weight:600;color:#111}
+.tr.big{font-size:12pt;font-weight:900;border-top:1px solid #ddd;margin-top:7px;padding-top:8px}
+.tr.big span{color:#1a5276}
+.notes-box{margin-top:14px;padding:10px 13px;background:#f5f5f5;border-radius:8px;border:1px solid #e0e0e0;font-size:9pt}
+.footer{margin-top:22px;text-align:center;font-size:8pt;color:#bbb;border-top:1px solid #eee;padding-top:12px}
+</style></head><body>
+<div class="logo"><h1>AMARTEF House Of Alcohol</h1><p>מומחים באלכוהול איכותי</p></div>
+<div class="banner">📦 הזמנה מספק</div>
+<div class="meta">
+  <div class="mb"><h3>ספק</h3><p>${sName}</p>${sPhone?`<p class="sub">📞 ${sPhone}</p>`:""}${sAgent?`<p class="sub">👤 ${sAgent}</p>`:""}</div>
+  <div class="mb"><h3>פרטי הזמנה</h3><p>מס׳ ${oNum}</p><p class="sub">📅 ${date}</p></div>
+  <div class="mb total-box"><h3>סה"כ לספק</h3><p>₪${oTotal.toFixed(2)}</p><p class="sub">כולל מע"מ 17%</p></div>
+</div>
+<table><thead><tr><th style="width:32px">#</th><th style="text-align:right">מוצר</th><th>כמות</th><th>מחיר קנייה</th><th>סה"כ</th></tr></thead><tbody>${rows}</tbody></table>
+<div class="totals-blk"><div class="totals-inner">
+  <div class="tr"><span>סה"כ ללא מע"מ:</span><span>₪${tBuy.toFixed(2)}</span></div>
+  <div class="tr"><span>מע"מ 17%:</span><span>₪${oVat.toFixed(2)}</span></div>
+  <div class="tr big"><span>📦 סה"כ לספק:</span><span>₪${oTotal.toFixed(2)}</span></div>
+</div></div>
+${notes?`<div class="notes-box"><h3>הערות</h3><p>${notes}</p></div>`:""}
+<div class="footer"><p>AMARTEF House Of Alcohol &nbsp;|&nbsp; הזמנה מס׳ ${oNum} | ${date}</p>
+<p style="margin-top:6px">חתימה: __________________ &nbsp;&nbsp; תאריך: __________________</p></div>
+</body></html>` };
+  }
+
+  const name  = document.getElementById("clientName").value  || "לקוח";
+  const phone = document.getElementById("clientPhone").value || "";
+  const city  = document.getElementById("clientCity").value  || "";
+  const qNum  = document.getElementById("quoteNum").value    || "";
+  const date  = document.getElementById("quoteDate").value   || "";
+  const notes = document.getElementById("notes").value       || "";
+
+  let tSell = 0;
+  const rows = cart.map((item, i) => {
+    const line = item.customSell * item.qty;
+    tSell += line;
+    const bg = i % 2 === 0 ? "#f9f9f9" : "#fff";
+    return `<tr style="background:${bg}">
+      <td style="text-align:center;color:#888">${i + 1}</td>
+      <td>${item.product.name}</td>
+      <td style="text-align:center;font-weight:700">${item.qty}</td>
+      <td style="text-align:center">₪${item.customSell.toFixed(2)}</td>
+      <td style="text-align:center;font-weight:700;color:#1a5276">₪${line.toFixed(2)}</td>
+    </tr>`;
+  }).join("");
+  const vat   = tSell * VAT;
+  const total = tSell + vat;
+  return { title: `הצעת מחיר ${qNum}`, fileBase: `AMARTEF-Quote-${qNum||Date.now()}`, html: `<!DOCTYPE html>
+<html dir="rtl" lang="he"><head><meta charset="UTF-8"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{direction:rtl;padding:20mm 16mm 15mm;font-size:10.5pt;color:#111;background:#fff}
+.logo{text-align:center;padding-bottom:14px;border-bottom:3px solid #c9a227;margin-bottom:16px}
+.logo h1{font-size:20pt;font-weight:900;color:#0c0c1a}
+.logo p{color:#999;font-size:8.5pt;margin-top:3px}
+.meta{display:flex;gap:10px;margin-bottom:18px}
+.mb{flex:1;background:#f5f5f5;border:1px solid #e0e0e0;border-radius:8px;padding:10px 13px}
+.mb h3{font-size:7.5pt;color:#999;letter-spacing:0.6px;margin-bottom:5px}
+.mb p{font-size:10pt;font-weight:700}.mb .sub{font-size:8.5pt;color:#666;margin-top:2px}
+.total-box{background:#0c0c1a;color:#fff}
+.total-box h3{color:#c9a227}.total-box p{color:#22c55e;font-size:14pt}.total-box .sub{color:#aaa}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:9.5pt}
+thead tr{background:#0c0c1a}thead th{color:#c9a227;padding:9px 8px;font-weight:700;font-size:9pt}
+tbody td{padding:7px 8px;border-bottom:1px solid #eee}
+.totals-blk{display:flex;justify-content:flex-end;margin-top:10px}
+.totals-inner{border:2px solid #0c0c1a;border-radius:10px;padding:12px 16px;width:52%}
+.tr{display:flex;justify-content:space-between;padding:3px 0;font-size:9.5pt;color:#555}
+.tr span:last-child{font-weight:600;color:#111}
+.tr.big{font-size:12pt;font-weight:900;border-top:1px solid #ddd;margin-top:7px;padding-top:8px}
+.tr.big span{color:#0a5}
+.notes-box{margin-top:14px;padding:10px 13px;background:#f5f5f5;border-radius:8px;border:1px solid #e0e0e0;font-size:9pt}
+.footer{margin-top:22px;text-align:center;font-size:8pt;color:#bbb;border-top:1px solid #eee;padding-top:12px}
+</style></head><body>
+<div class="logo"><h1>AMARTEF House Of Alcohol</h1><p>מומחים באלכוהול איכותי | הצעת מחיר מקצועית</p></div>
+<div class="meta">
+  <div class="mb"><h3>לקוח</h3><p>${name}</p>${phone?`<p class="sub">📞 ${phone}</p>`:""}${city?`<p class="sub">📍 ${city}</p>`:""}</div>
+  <div class="mb"><h3>פרטי הצעה</h3><p>מס׳ ${qNum}</p><p class="sub">📅 ${date}</p></div>
+  <div class="mb total-box"><h3>סה"כ לתשלום</h3><p>₪${total.toFixed(2)}</p><p class="sub">כולל מע"מ 17%</p></div>
+</div>
+<table><thead><tr><th style="width:32px">#</th><th style="text-align:right">מוצר</th><th>כמות</th><th>מחיר ליח׳</th><th>סה"כ</th></tr></thead><tbody>${rows}</tbody></table>
+<div class="totals-blk"><div class="totals-inner">
+  <div class="tr"><span>סה"כ לפני מע"מ:</span><span>₪${tSell.toFixed(2)}</span></div>
+  <div class="tr"><span>מע"מ 17%:</span><span>₪${vat.toFixed(2)}</span></div>
+  <div class="tr big"><span>💰 סה"כ לתשלום:</span><span>₪${total.toFixed(2)}</span></div>
+</div></div>
+${notes?`<div class="notes-box"><h3>הערות</h3><p>${notes}</p></div>`:""}
+<div class="footer"><p>AMARTEF House Of Alcohol &nbsp;|&nbsp; הצעה תקפה ל-30 יום ממועד הפקתה</p><p style="margin-top:4px">תודה על האמון! 🙏</p></div>
+</body></html>` };
+}
+
+// ================================================================
+// הורדת PDF אמיתית (קובץ .pdf — לא חלון הדפסה)
 // ================================================================
 function downloadPDF() {
+  if (!cart.length) { alert(mode === "order" ? "הוסף מוצרים להזמנה לפני הורדת PDF" : "הוסף מוצרים להצעה לפני הורדת PDF"); return; }
+  if (typeof html2pdf === "undefined") { alert("ספריית PDF עדיין נטענת — נסה שוב בעוד רגע"); return; }
+
+  const doc = buildDocHTML();
+  // צור div זמני סמוי שמכיל את ה-HTML
+  const wrap = document.createElement("div");
+  wrap.style.cssText = "position:fixed;left:-10000px;top:0;width:210mm;background:#fff;";
+  // נחלץ רק את ה-body של ה-HTML שבנינו
+  const bodyMatch = doc.html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+  const styleMatch = doc.html.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
+  wrap.innerHTML = (styleMatch ? `<style>${styleMatch[1]}</style>` : "") + (bodyMatch ? bodyMatch[1] : doc.html);
+  document.body.appendChild(wrap);
+
+  if (cart.length) saveHistoryEntry(buildHistoryEntry());
+
+  html2pdf().set({
+    margin:       0,
+    filename:     `${doc.fileBase}.pdf`,
+    image:        { type: 'jpeg', quality: 0.96 },
+    html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+  }).from(wrap).save().then(() => {
+    document.body.removeChild(wrap);
+  }).catch(err => {
+    console.error("PDF error:", err);
+    alert("שגיאה בהורדת PDF — נסה שוב");
+    if (wrap.parentNode) document.body.removeChild(wrap);
+  });
+}
+
+// ================================================================
+// הורדת מסמך Word (.doc) — נפתח ב-Word וניתן לעריכה מלאה
+// ================================================================
+function downloadWord() {
+  if (!cart.length) { alert(mode === "order" ? "הוסף מוצרים להזמנה לפני הורדת Word" : "הוסף מוצרים להצעה לפני הורדת Word"); return; }
+  const doc = buildDocHTML();
+
+  // עטיפת MS Word — מאפשרת ל-Word לפתוח את הקובץ עם RTL וסגנונות
+  const header = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>`;
+  const bodyMatch  = doc.html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+  const styleMatch = doc.html.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
+  const fullHTML = `${header}<head><meta charset='utf-8'><title>${doc.title}</title>
+<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]-->
+${styleMatch ? `<style>${styleMatch[1]}</style>` : ""}
+</head><body dir="rtl">${bodyMatch ? bodyMatch[1] : doc.html}</body></html>`;
+
+  const blob = new Blob(['\ufeff' + fullHTML], { type: 'application/msword' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `${doc.fileBase}.doc`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+  if (cart.length) saveHistoryEntry(buildHistoryEntry());
+}
+
+// ================================================================
+// (ישן) הורדת PDF דרך חלון הדפסה — נשמר כגיבוי
+// ================================================================
+function downloadPDF_legacy() {
   if (!cart.length) { alert(mode === "order" ? "הוסף מוצרים להזמנה לפני הורדת PDF" : "הוסף מוצרים להצעה לפני הורדת PDF"); return; }
 
   if (mode === "order") {

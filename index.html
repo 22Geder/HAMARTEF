@@ -1837,9 +1837,8 @@ ${styleMatch ? `<style>${styleMatch[1]}</style>` : ""}
 // ================================================================
 // (ישן) הורדת PDF דרך חלון הדפסה — נשמר כגיבוי
 // ================================================================
-function downloadPDF_legacy() {
-  if (!cart.length) { alert(mode === "order" ? "הוסף מוצרים להזמנה לפני הורדת PDF" : "הוסף מוצרים להצעה לפני הורדת PDF"); return; }
-
+function downloadPDF_legacy_DISABLED() {
+  return; // dead code — kept only for reference
   if (mode === "order") {
     const sName  = document.getElementById("supplierName").value  || "ספק";
     const sPhone = document.getElementById("supplierPhone").value || "";

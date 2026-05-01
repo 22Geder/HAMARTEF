@@ -876,8 +876,8 @@ function bottleSVG(cat, id) {
 // ─── IMAGE CACHE ────────────────────────────────────────────────────
 let imageCache = {};
 let _imgQueue = [], _imgRunning = 0;
-const IMG_CONCURRENCY = 1;
-const IMG_DELAY_MS = 2500;
+const IMG_CONCURRENCY = 3;
+const IMG_DELAY_MS = 80;
 
 function loadImageCache() {
   try { imageCache = JSON.parse(localStorage.getItem('amartef_img_cache') || '{}'); } catch(e) { imageCache = {}; }
@@ -899,8 +899,8 @@ function clearImageCache() {
   renderProducts();
   showSettingsStatus('🗑️ מטמון התמונות נוקה — הבקבוקים יטענו מחדש', '#2e7d32');
 }
-function enqueueBottleImage(pid, name) {
-  _imgQueue.push({pid, productName: name});
+function enqueueBottleImage(pid, name, cat) {
+  _imgQueue.push({pid, productName: name, cat});
   _pumpQueue();
 }
 function _pumpQueue() {
@@ -1154,8 +1154,8 @@ async function _doFetch(pid, productName, cat) {
   // 1. Brand-specific real product photo
   const brandUrl = _getBrandImageUrl(productName);
   if (brandUrl) {
-    imageUrl = await _verifyImage(brandUrl);
-    if (imageUrl) console.log("[Brand]", productName);
+    imageUrl = brandUrl; // trust weserv proxy - skip slow _verifyImage
+    console.log("[Brand]", productName);
   }
 
   // 2. Category fallback — real generic bottle photo

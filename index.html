@@ -1661,12 +1661,9 @@ function buildDocHTML() {
         <td style="text-align:center;color:#888">${i + 1}</td>
         <td>${item.product.name}</td>
         <td style="text-align:center;font-weight:700">${item.qty}</td>
-        <td style="text-align:center">₪${buy.toFixed(2)}</td>
-        <td style="text-align:center;font-weight:700;color:#1a5276">₪${line.toFixed(2)}</td>
       </tr>`;
     }).join("");
-    const oVat   = tBuy * VAT;
-    const oTotal = tBuy + oVat;
+    const oTotal = tBuy;
     return { title: `הזמנה ${oNum}`, fileBase: `AMARTEF-Order-${oNum||Date.now()}`, html: `<!DOCTYPE html>
 <html dir="rtl" lang="he"><head><meta charset="UTF-8"/>
 <style>
@@ -1700,14 +1697,9 @@ tbody td{padding:7px 8px;border-bottom:1px solid #eee}
 <div class="meta">
   <div class="mb"><h3>ספק</h3><p>${sName}</p>${sPhone?`<p class="sub">📞 ${sPhone}</p>`:""}${sAgent?`<p class="sub">👤 ${sAgent}</p>`:""}</div>
   <div class="mb"><h3>פרטי הזמנה</h3><p>מס׳ ${oNum}</p><p class="sub">📅 ${date}</p></div>
-  <div class="mb total-box"><h3>סה"כ לספק</h3><p>₪${oTotal.toFixed(2)}</p><p class="sub">כולל מע"מ 17%</p></div>
+  <div class="mb"><h3>סה"כ פריטים</h3><p>${cart.reduce((s,it)=>s+it.qty,0)} יחידות</p><p class="sub">${cart.length} מוצרים</p></div>
 </div>
-<table><thead><tr><th style="width:32px">#</th><th style="text-align:right">מוצר</th><th>כמות</th><th>מחיר קנייה</th><th>סה"כ</th></tr></thead><tbody>${rows}</tbody></table>
-<div class="totals-blk"><div class="totals-inner">
-  <div class="tr"><span>סה"כ ללא מע"מ:</span><span>₪${tBuy.toFixed(2)}</span></div>
-  <div class="tr"><span>מע"מ 17%:</span><span>₪${oVat.toFixed(2)}</span></div>
-  <div class="tr big"><span>📦 סה"כ לספק:</span><span>₪${oTotal.toFixed(2)}</span></div>
-</div></div>
+<table><thead><tr><th style="width:40px">#</th><th style="text-align:right">מוצר</th><th style="width:80px">כמות</th></tr></thead><tbody>${rows}</tbody></table>
 ${notes?`<div class="notes-box"><h3>הערות</h3><p>${notes}</p></div>`:""}
 <div class="footer"><p>AMARTEF House Of Alcohol &nbsp;|&nbsp; הזמנה מס׳ ${oNum} | ${date}</p>
 <p style="margin-top:6px">חתימה: __________________ &nbsp;&nbsp; תאריך: __________________</p></div>
@@ -1787,10 +1779,9 @@ function downloadPDF() {
   if (typeof html2pdf === "undefined") { alert("ספריית PDF עדיין נטענת — נסה שוב בעוד רגע"); return; }
 
   const doc = buildDocHTML();
-  // צור div זמני סמוי שמכיל את ה-HTML
+  // צור div גלוי-אך-לא-מפריע (off-screen פוגע ב-html2canvas)
   const wrap = document.createElement("div");
-  wrap.style.cssText = "position:fixed;left:-10000px;top:0;width:210mm;background:#fff;";
-  // נחלץ רק את ה-body של ה-HTML שבנינו
+  wrap.style.cssText = "position:fixed;left:0;top:0;width:210mm;min-height:297mm;background:#fff;z-index:-1;opacity:0.01;pointer-events:none;";
   const bodyMatch = doc.html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
   const styleMatch = doc.html.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
   wrap.innerHTML = (styleMatch ? `<style>${styleMatch[1]}</style>` : "") + (bodyMatch ? bodyMatch[1] : doc.html);

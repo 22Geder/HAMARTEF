@@ -1763,24 +1763,37 @@ ${notes?`<div class="notes-box"><h3>הערות</h3><p>${notes}</p></div>`:""}
 </body></html>` };
 }
 
+
 // ================================================================
-// הורדת PDF — הדפסה דרך iframe מוסתר
+// הורדת PDF — קובץ PDF אמיתי דרך html2pdf
 // ================================================================
 function downloadPDF() {
   if (!cart.length) { alert(mode === "order" ? "הוסף מוצרים להזמנה לפני הורדת PDF" : "הוסף מוצרים להצעה לפני הורדת PDF"); return; }
   if (cart.length) saveHistoryEntry(buildHistoryEntry());
   const doc = buildDocHTML();
-  const _if = document.createElement("iframe");
-  _if.style.cssText = "position:fixed;top:-9999px;left:-9999px;width:210mm;height:297mm;border:none;";
-  document.body.appendChild(_if);
-  _if.srcdoc = doc.html;
-  _if.onload = function() {
-    setTimeout(function() {
-      _if.contentWindow.focus();
-      _if.contentWindow.print();
-      setTimeout(function(){ if(_if.parentNode) _if.parentNode.removeChild(_if); }, 60000);
-    }, 500);
-  };
+  const bodyMatch  = doc.html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+  const styleMatch = doc.html.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
+  const wrap = document.createElement("div");
+  wrap.style.cssText = "position:absolute;left:-9999px;top:0;width:210mm;min-height:297mm;background:#fff;direction:rtl;";
+  wrap.innerHTML = (styleMatch ? "<style>" + styleMatch[1] + "</style>" : "") + (bodyMatch ? bodyMatch[1] : doc.html);
+  document.body.appendChild(wrap);
+  if (typeof html2pdf === "undefined") {
+    document.body.removeChild(wrap);
+    alert("ספריית PDF טרם נטענה — נסה שוב בעוד רגע"); return;
+  }
+  html2pdf().set({
+    margin:      [10, 10, 10, 10],
+    filename:    doc.fileBase + ".pdf",
+    image:       { type: "jpeg", quality: 0.97 },
+    html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff", logging: false, allowTaint: true },
+    jsPDF:       { unit: "mm", format: "a4", orientation: "portrait" }
+  }).from(wrap).save().then(function() {
+    if (wrap.parentNode) document.body.removeChild(wrap);
+  }).catch(function(err) {
+    console.error("PDF error:", err);
+    if (wrap.parentNode) document.body.removeChild(wrap);
+    alert("שגיאה בהפקת PDF — נסה שוב");
+  });
 }
 
 // ================================================================

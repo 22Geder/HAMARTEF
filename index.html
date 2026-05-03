@@ -218,6 +218,23 @@
     .add-btn:active { transform: scale(0.97); }
     .add-btn:disabled { cursor: not-allowed; }
 
+    /* ── ניהול מלאי ── */
+    .inv-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+    .inv-row { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; }
+    .inv-row.zero { opacity: 0.55; border-color: rgba(184,50,50,0.35); }
+    .inv-name { flex: 1; font-size: 0.85rem; color: var(--text); font-weight: 600; line-height: 1.3; }
+    .inv-qty { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .inv-inp { width: 60px; height: 32px; text-align: center; font-size: 0.95rem; font-weight: 800; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 0 4px; -moz-appearance: textfield; }
+    .inv-inp::-webkit-outer-spin-button, .inv-inp::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .inv-qty-badge { position: absolute; top: 6px; left: 6px; background: rgba(40,180,80,0.92); color: #fff; font-size: 0.7rem; font-weight: 900; padding: 2px 7px; border-radius: 10px; z-index: 2; pointer-events: none; }
+    .inv-qty-badge.low { background: rgba(220,140,30,0.92); }
+    .inv-qty-badge.zero { background: rgba(184,50,50,0.92); }
+
+    /* ── כפתור "בוצע" בהזמנות שמורות ── */
+    .so-fulfill { padding: 6px 10px; background: linear-gradient(135deg,#1e8449,#27ae60); color:#fff; border:none; border-radius:7px; font-weight:800; font-size:0.78rem; cursor:pointer; font-family:'Heebo',Arial,sans-serif; }
+    .so-fulfill:hover { opacity: 0.88; }
+    .so-fulfill.done { background:#555; cursor:default; }
+
     /* ─── MODE TOGGLE ─────────────────────────────── */
     .mode-toggle { display: flex; padding: 10px 14px; gap: 7px; border-bottom: 1px solid var(--border); flex-shrink: 0; background: var(--card2); }
     .mode-btn { flex: 1; padding: 9px; border-radius: 9px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-size: 0.82rem; font-weight: 700; font-family: 'Heebo',Arial,sans-serif; cursor: pointer; transition: all 0.18s; }
@@ -1563,10 +1580,13 @@ function buildTabs() {
   tabsEl.innerHTML = "";
   const customCats = [...new Set(customProducts.map(p => p.cat))].filter(c => !Object.prototype.hasOwnProperty.call(ICON, c) || ICON[c] === "🍷");
   const allCats = [...Object.keys(ICON), ...customCats.filter(c => !ICON[c])];
-  ["הכל", ...allCats].forEach(cat => {
+  // "מלאי" — קטגוריה מיוחדת לניהול כמויות
+  ["הכל", "מלאי", ...allCats].forEach(cat => {
     const btn = document.createElement("button");
     btn.className = "tabb" + (cat === activeCat ? " on" : "");
-    btn.textContent = cat === "הכל" ? "✨ הכל" : (ICON[cat] || "🍷") + " " + cat;
+    btn.textContent = cat === "הכל" ? "✨ הכל"
+                    : cat === "מלאי" ? "📦 מלאי"
+                    : (ICON[cat] || "🍷") + " " + cat;
     btn.onclick = () => {
       activeCat = cat;
       document.querySelectorAll(".tabb").forEach(b => b.classList.remove("on"));
@@ -1591,6 +1611,7 @@ function init() {
   loadBuyPrices();
   loadSellPrices();
   loadStock();
+  loadInvQty();
   loadImageCache();
   _loadSavedOrders();
   renderProducts();
@@ -1606,6 +1627,43 @@ function renderProducts() {
   const q   = document.getElementById("searchBox").value.trim().toLowerCase();
   const con = document.getElementById("productsContainer");
   con.innerHTML = "";
+
+  // ── מצב "מלאי" — תצוגה ייעודית עם input כמות לכל בקבוק ──
+  if (activeCat === "מלאי") {
+    const list = getAllProducts().filter(p => !q || p.name.toLowerCase().includes(q) || p.cat.toLowerCase().includes(q));
+    const totalQty = Object.values(invQty).reduce((a,b) => a + (parseInt(b)||0), 0);
+    const groups = {};
+    list.forEach(p => { (groups[p.cat] = groups[p.cat] || []).push(p); });
+
+    const hdr = document.createElement("div");
+    hdr.className = "cat-hdr";
+    hdr.innerHTML = `📦 ניהול מלאי <span style="font-weight:300;font-size:0.78rem;color:var(--muted)">— סה"כ במלאי: <b id="invTotalCount" style="color:var(--accent)">${totalQty}</b> בקבוקים</span>`;
+    con.appendChild(hdr);
+
+    Object.entries(groups).forEach(([cat, prods]) => {
+      const sub = document.createElement("div");
+      sub.className = "cat-hdr";
+      sub.style.cssText = "font-size:0.95rem;margin-top:14px;opacity:0.85";
+      sub.innerHTML = (ICON[cat] || "🍷") + " " + cat + ` <span style="font-weight:300;font-size:0.72rem;color:var(--muted)">(${prods.length})</span>`;
+      con.appendChild(sub);
+
+      const tbl = document.createElement("div");
+      tbl.className = "inv-list";
+      tbl.innerHTML = prods.map(p => {
+        const cur = parseInt(invQty[p.id]) || 0;
+        return `<div class="inv-row${cur === 0 ? " zero" : ""}">
+          <div class="inv-name">${p.name}</div>
+          <div class="inv-qty">
+            <button class="qbtn" onclick="invAdjust(${p.id},-1)">−</button>
+            <input id="inv_${p.id}" class="inv-inp" type="number" min="0" value="${cur}" onchange="setInvQty(${p.id},this.value)" inputmode="numeric" />
+            <button class="qbtn" onclick="invAdjust(${p.id},1)">+</button>
+          </div>
+        </div>`;
+      }).join("");
+      con.appendChild(tbl);
+    });
+    return;
+  }
 
   const filtered = getAllProducts().filter(p => {
     const okCat = activeCat === "הכל" || p.cat === activeCat;
@@ -1646,6 +1704,12 @@ function renderProducts() {
             ${inStock ? "✓" : "✗"}
           </button>
         </div>
+        ${(() => {
+          const q = parseInt(invQty[p.id]);
+          if (isNaN(q)) return "";
+          const cls = q === 0 ? "zero" : (q <= 2 ? "low" : "");
+          return `<div class="inv-qty-badge ${cls}" title="כמות במלאי">${q}</div>`;
+        })()}
         <img class="p-bottle" id="img_${p.id}" src="${imageCache[p.id] || _getCocktailDBUrl(p.name) || bottleSVG(p.cat, p.id)}" alt="${p.name}"
           onclick="openImagePicker(${p.id})" title="לחץ להחלפת תמונה"
           onerror="this.src='${bottleSVG(p.cat, p.id)}'" />
@@ -1716,6 +1780,45 @@ function toggleStock(pid) {
   stockMap[pid] = !stockMap[pid];
   saveStock();
   renderProducts();
+}
+
+// ================================================================
+// כמויות מלאי (invQty)
+// pid → integer (כמה בקבוקים יש פיזית). undefined = לא מנוהל.
+// ================================================================
+let invQty = {};
+function loadInvQty() {
+  try {
+    const s = localStorage.getItem("amartef_inv_qty");
+    if (s) {
+      const parsed = JSON.parse(s);
+      Object.keys(parsed).forEach(k => { invQty[parseInt(k)] = parsed[k]; });
+    }
+  } catch(e) {}
+}
+function saveInvQty() {
+  try { localStorage.setItem("amartef_inv_qty", JSON.stringify(invQty)); } catch(e) {}
+}
+function setInvQty(pid, val) {
+  const n = Math.max(0, parseInt(val) || 0);
+  invQty[pid] = n;
+  // סנכרון אוטומטי עם stockMap: אם 0 → אזל, אם > 0 → במלאי
+  if (n === 0) stockMap[pid] = false;
+  else         stockMap[pid] = true;
+  saveInvQty();
+  saveStock();
+  // עדכון תצוגה: רענון רק של כרטיסיית המלאי וכרטיסיות המוצרים
+  const card = document.getElementById("card_" + pid);
+  if (card) card.classList.toggle("no-stock", !stockMap[pid]);
+  // עדכון תצוגת הסכום בכותרת
+  const totEl = document.getElementById("invTotalCount");
+  if (totEl) totEl.textContent = Object.values(invQty).reduce((a,b) => a + (parseInt(b)||0), 0);
+}
+function invAdjust(pid, delta) {
+  const cur = parseInt(invQty[pid]) || 0;
+  setInvQty(pid, cur + delta);
+  const inp = document.getElementById("inv_" + pid);
+  if (inp) inp.value = invQty[pid];
 }
 
 function addToCart(pid) {
@@ -2349,12 +2452,16 @@ function openSavedOrders() {
       const netAmt  = total - disc;
       const items   = (o.cart || []).reduce((s, it) => s + it.qty, 0);
       const mLbl    = o.mode === "order" ? "📦 הזמנה" : "📋 הצעה";
+      const fulfilledMark = o.fulfilled ? ' <span style="color:#27ae60">✓ בוצע</span>' : '';
       return `<div class="saved-order-item">
         <div class="so-info">
-          <div class="so-name">${mLbl} – ${o.name}</div>
+          <div class="so-name">${mLbl} – ${o.name}${fulfilledMark}</div>
           <div class="so-meta">${d} &nbsp;·&nbsp; ${items} פריטים &nbsp;·&nbsp; ₪${netAmt.toFixed(0)}${o.discount > 0 ? " (הנחה " + o.discount + "%)" : ""}</div>
         </div>
         <div class="so-actions">
+          ${o.fulfilled
+            ? '<button class="so-fulfill done" disabled>✓ בוצע</button>'
+            : `<button class="so-fulfill" onclick="fulfillSavedOrder(${i})" title="סמן כבוצע — יורד מהמלאי">✓ בוצע</button>`}
           <button class="so-load" onclick="loadSavedOrder(${i})">טען</button>
           <button class="so-del"  onclick="deleteSavedOrder(${i})">🗑</button>
         </div>
@@ -2400,6 +2507,38 @@ function deleteSavedOrder(i) {
   savedOrders.splice(i, 1);
   _persistSavedOrders();
   openSavedOrders();
+}
+
+// סימון כ"בוצע": הצעה (מכירה ללקוח) → הורדה מהמלאי. הזמנה (קנייה מספק) → הוספה למלאי.
+function fulfillSavedOrder(i) {
+  const o = savedOrders[i];
+  if (!o) return;
+  if (o.fulfilled) { alert("הזמנה זו כבר סומנה כבוצעה."); return; }
+  const isOrder = o.mode === "order";
+  const verb    = isOrder ? "תוסיף למלאי" : "תוריד מהמלאי";
+  const lines   = (o.cart || []).map(it => {
+    const cur = parseInt(invQty[it.product.id]) || 0;
+    const next = isOrder ? cur + it.qty : Math.max(0, cur - it.qty);
+    return `• ${it.product.name}: ${cur} → ${next} (${isOrder ? "+" : "−"}${it.qty})`;
+  }).join("\n");
+  if (!confirm(`לסמן "${o.name}" כבוצע?\nהפעולה ${verb}:\n\n${lines}`)) return;
+
+  (o.cart || []).forEach(it => {
+    const pid = it.product.id;
+    const cur = parseInt(invQty[pid]) || 0;
+    const next = isOrder ? cur + it.qty : Math.max(0, cur - it.qty);
+    invQty[pid] = next;
+    stockMap[pid] = next > 0;
+  });
+  saveInvQty();
+  saveStock();
+
+  o.fulfilled = true;
+  o.fulfilledAt = new Date().toISOString();
+  _persistSavedOrders();
+  alert("✅ סומן כבוצע. המלאי עודכן.");
+  openSavedOrders();
+  if (activeCat === "מלאי") renderProducts();
 }
 
 // ================================================================

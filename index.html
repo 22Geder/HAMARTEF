@@ -1137,6 +1137,7 @@ const ICON = {
   "רום":      "🍹",
   "טקילה":    "🌵",
   "שמפניה":   "🍾",
+  "מיקסרים":  "🥤",
 };
 
 // צבעי בקבוק לכל קטגוריה
@@ -1169,22 +1170,22 @@ const PRODUCTS = [
   { id:5,  cat:"וודקה",  name:"אבסולוט פטל – 700 מ\"ל",                     buy:45,  sell:70  },
   { id:6,  cat:"וודקה",  name:"סמירנוף רד לייבל – 1 ליטר",                 buy:38,  sell:59  },
   { id:7,  cat:"וודקה",  name:"סמירנוף רד לייבל – 700 מ\"ל",               buy:30,  sell:47  },
-  { id:8,  cat:"וודקה",  name:"גריי גוס – 700 מ\"ל",                        buy:95,  sell:148 },
-  { id:9,  cat:"וודקה",  name:"בלבדר פיור – 700 מ\"ל",                      buy:100, sell:155 },
+  { id:8,  cat:"וודקה",  name:"גריי גוס – 700 מ\"ל",                        buy:106, sell:136, max:149 },
+  { id:9,  cat:"וודקה",  name:"בלבדר פיור – 700 מ\"ל",                      buy:109, sell:0,   max:0, noSell:true },
   { id:10, cat:"וודקה",  name:"קטל וואן – 1 ליטר",                          buy:75,  sell:115 },
   { id:11, cat:"וודקה",  name:"סירוק אוריג'ינל – 700 מ\"ל",                 buy:95,  sell:145 },
   { id:12, cat:"וודקה",  name:"קריסטל הד – 700 מ\"ל",                       buy:120, sell:180 },
   { id:13, cat:"וודקה",  name:"פינלנדיה קלאסיק – 1 ליטר",                  buy:45,  sell:70  },
   { id:14, cat:"וודקה",  name:"סטוליצ'נאיה פרמיום – 1 ליטר",               buy:48,  sell:74  },
-  { id:15, cat:"וודקה",  name:"רוסיאן סטנדרד – 1 ליטר",                    buy:42,  sell:65  },
+  { id:15, cat:"וודקה",  name:"רוסיאן סטנדרד – 1 ליטר",                    buy:66,  sell:83,  max:87  },
   { id:16, cat:"וודקה",  name:"אריסטוף אוריג'ינל – 1 ליטר",                buy:38,  sell:58  },
-  { id:17, cat:"וודקה",  name:"בלוגה נובל – 1 ליטר",                          buy:95,  sell:148 },
+  { id:17, cat:"וודקה",  name:"בלוגה נובל – 1 ליטר",                          buy:116, sell:149, max:160 },
   { id:18, cat:"וודקה",  name:"בלוגה נובל – 700 מ\"ל",                        buy:75,  sell:118 },
 
   // ── ויסקי ──────────────────────────────────────
   { id:30, cat:"ויסקי",  name:"ג'וני ווקר רד לייבל – 1 ליטר",              buy:65,  sell:99  },
   { id:31, cat:"ויסקי",  name:"ג'וני ווקר רד לייבל – 700 מ\"ל",            buy:52,  sell:79  },
-  { id:32, cat:"ויסקי",  name:"ג'וני ווקר בלאק לייבל – 1 ליטר",            buy:95,  sell:142 },
+  { id:32, cat:"ויסקי",  name:"ג'וני ווקר בלאק לייבל – 1 ליטר",            buy:105, sell:140, max:152 },
   { id:33, cat:"ויסקי",  name:"ג'וני ווקר בלאק לייבל – 700 מ\"ל",          buy:78,  sell:118 },
   { id:34, cat:"ויסקי",  name:"ג'וני ווקר גולד ריזרב – 1 ליטר",            buy:160, sell:235 },
   { id:35, cat:"ויסקי",  name:"ג'וני ווקר בלו לייבל – 750 מ\"ל",           buy:320, sell:465 },
@@ -1211,8 +1212,8 @@ const PRODUCTS = [
   { id:48, cat:"ויסקי",  name:"גלנפידיך 15 שנה – 700 מ\"ל",                buy:150, sell:220 },
   { id:49, cat:"ויסקי",  name:"גלנפידיך 18 שנה – 700 מ\"ל",                buy:210, sell:305 },
   { id:50, cat:"ויסקי",  name:"גלנפידיך 21 שנה – 700 מ\"ל",                buy:300, sell:435 },
-  { id:51, cat:"ויסקי",  name:"גלנליבט 12 שנה – 700 מ\"ל",                 buy:105, sell:155 },
-  { id:52, cat:"ויסקי",  name:"גלנליבט 15 שנה – 700 מ\"ל",                 buy:140, sell:205 },
+  { id:51, cat:"ויסקי",  name:"גלנליבט 12 שנה – 700 מ\"ל",                 buy:104, sell:129, max:160 },
+  { id:52, cat:"ויסקי",  name:"גלנליבט 15 שנה – 700 מ\"ל",                 buy:145, sell:159, max:200 },
   { id:53, cat:"ויסקי",  name:"מאנקי שולדר – 700 מ\"ל",                    buy:100, sell:150 },
   { id:54, cat:"ויסקי",  name:"בלנטיינס פיינסט – 1 ליטר",                  buy:62,  sell:95  },
   { id:55, cat:"ויסקי",  name:"דיוורס ווייט לייבל – 1 ליטר",               buy:58,  sell:88  },
@@ -1224,17 +1225,17 @@ const PRODUCTS = [
   { id:61, cat:"ויסקי",  name:"ג'ים ביים ווייט לייבל – 1 ליטר",           buy:55,  sell:84  },
   { id:62, cat:"ויסקי",  name:"ווילד טרקי 101 – 1 ליטר",                   buy:78,  sell:118 },
   { id:63, cat:"ויסקי",  name:"טולמור דיו – 1 ליטר",                        buy:72,  sell:109 },
-  { id:64, cat:"ויסקי",  name:"רויאל סאלוט 21 שנה – 700 מ\"ל",               buy:400, sell:580 },
+  { id:64, cat:"ויסקי",  name:"רויאל סאלוט 21 שנה – 700 מ\"ל",               buy:292, sell:359, max:580 },
 
   // ── ואן גוך ────────────────────────────────────
   { id:70, cat:"ואן גוך", name:"ואן גוך וודקה מקורית – 750 מ\"ל",          buy:65,  sell:98  },
   { id:71, cat:"ואן גוך", name:"ואן גוך אספרסו כפול – 750 מ\"ל",           buy:70,  sell:105 },
   { id:72, cat:"ואן גוך", name:"ואן גוך קרמל – 750 מ\"ל",                   buy:70,  sell:105 },
   { id:73, cat:"ואן גוך", name:"ואן גוך שוקולד הולנדי – 750 מ\"ל",          buy:70,  sell:105 },
-  { id:74, cat:"ואן גוך", name:"ואן גוך אננס – 750 מ\"ל",                   buy:68,  sell:100 },
+  { id:74, cat:"ואן גוך", name:"ואן גוך אננס – 1 ליטר",                      buy:95,  sell:135, max:142 },
   { id:75, cat:"ואן גוך", name:"ואן גוך קוקוס – 750 מ\"ל",                  buy:68,  sell:100 },
   { id:76, cat:"ואן גוך", name:"ואן גוך מנגו – 750 מ\"ל",                   buy:68,  sell:100 },
-  { id:77, cat:"ואן גוך", name:"ואן גוך בלו אסאי – 750 מ\"ל",              buy:72,  sell:108 },
+  { id:77, cat:"ואן גוך", name:"ואן גוך בלו אסאי – 750 מ\"ל",              buy:73,  sell:117, max:130 },
   { id:78, cat:"ואן גוך", name:"ואן גוך פטל – 750 מ\"ל",                    buy:68,  sell:100 },
   { id:79, cat:"ואן גוך", name:"ואן גוך וניל – 750 מ\"ל",                   buy:68,  sell:100 },
   { id:80, cat:"ואן גוך", name:"ואן גוך אפרסק – 750 מ\"ל",                  buy:68,  sell:100 },
@@ -1243,7 +1244,7 @@ const PRODUCTS = [
   { id:83, cat:"ואן גוך", name:"ואן גוך רימון – 750 מ\"ל",                  buy:68,  sell:100 },
 
   // ── ערק ────────────────────────────────────────
-  { id:90, cat:"ערק",    name:"ערק 777 אליט – 1 ליטר",                       buy:28,  sell:44  },
+  { id:90, cat:"ערק",    name:"ערק 777 אליט – 1 ליטר",                       buy:52.5, sell:64, max:65 },
   { id:91, cat:"ערק",    name:"ערק 777 אליט – 700 מ\"ל",                     buy:22,  sell:35  },
   { id:92, cat:"ערק",    name:"ערק ברק – 1 ליטר",                            buy:32,  sell:50  },
   { id:93, cat:"ערק",    name:"ערק ברק – 700 מ\"ל",                          buy:26,  sell:40  },
@@ -1256,7 +1257,7 @@ const PRODUCTS = [
   // ── ג'ין ───────────────────────────────────────
   { id:110,cat:"ג'ין",   name:"הנדריקס ג'ין – 700 מ\"ל",                    buy:95,  sell:142 },
   { id:111,cat:"ג'ין",   name:"טנקראי לונדון דריי – 1 ליטר",                buy:72,  sell:108 },
-  { id:112,cat:"ג'ין",   name:"בומביי ספייר – 1 ליטר",                      buy:72,  sell:108 },
+  { id:112,cat:"ג'ין",   name:"בומביי ספייר – 1 ליטר",                      buy:91.5,sell:119, max:140 },
   { id:113,cat:"ג'ין",   name:"ביפיטר לונדון דריי – 1 ליטר",               buy:60,  sell:90  },
   { id:114,cat:"ג'ין",   name:"גורדונס לונדון דריי – 1 ליטר",              buy:45,  sell:70  },
   { id:115,cat:"ג'ין",   name:"בוטניסט איילי ג'ין – 700 מ\"ל",             buy:110, sell:162 },
@@ -1277,17 +1278,17 @@ const PRODUCTS = [
   { id:130,cat:"טקילה",  name:"חוסה קוארבו גולד – 1 ליטר",                 buy:55,  sell:84  },
   { id:131,cat:"טקילה",  name:"חוסה קוארבו סילבר – 1 ליטר",               buy:55,  sell:84  },
   { id:132,cat:"טקילה",  name:"אולמקה גולד – 1 ליטר",                      buy:52,  sell:80  },
-  { id:133,cat:"טקילה",  name:"פטרון סילבר – 700 מ\"ל",                     buy:115, sell:172 },
+  { id:133,cat:"טקילה",  name:"פטרון סילבר – 700 מ\"ל",                     buy:144, sell:200, max:229 },
   { id:134,cat:"טקילה",  name:"1800 סילבר טקילה – 700 מ\"ל",               buy:95,  sell:142 },
   { id:135,cat:"טקילה",  name:"אספולון בלאנקו – 700 מ\"ל",                 buy:75,  sell:112 },
   { id:136,cat:"טקילה",  name:"דון חוליו בלאנקו – 700 מ\"ל",              buy:145, sell:215 },
   { id:137,cat:"טקילה",  name:"דון חוליו רפוסדו – 700 מ\"ל",              buy:158, sell:235 },
   { id:138,cat:"טקילה",  name:"דון חוליו אניחו – 700 מ\"ל",               buy:185, sell:275 },
-  { id:139,cat:"טקילה",  name:"דון חוליו 1942 – 750 מ\"ל",                buy:550, sell:800 },
+  { id:139,cat:"טקילה",  name:"דון חוליו 1942 – 750 מ\"ל",                buy:373, sell:489, max:500 },
   { id:145,cat:"טקילה",  name:"דון חוליו פרימה – 750 מ\"ל",               buy:420, sell:620 },
   { id:146,cat:"טקילה",  name:"דון חוליו רל – 750 מ\"ל",                  buy:750, sell:1100 },
   { id:147,cat:"טקילה",  name:"דון חוליו 70 – 750 מ\"ל",                  buy:480, sell:700 },
-  { id:148,cat:"טקילה",  name:"קלאסה אזול בלאנקו – 750 מ\"ל",             buy:820, sell:1200 },
+  { id:148,cat:"טקילה",  name:"קלאסה אזול בלאנקו – 750 מ\"ל",             buy:559, sell:700, max:800 },
   { id:149,cat:"טקילה",  name:"קלאסה אזול רפוסדו – 750 מ\"ל",             buy:880, sell:1280 },
   { id:162,cat:"טקילה",  name:"קלאסה אזול אניחו – 750 מ\"ל",              buy:980, sell:1450 },
   { id:163,cat:"טקילה",  name:"קלאסה אזול פלטה – 750 מ\"ל",               buy:1800, sell:2600 },
@@ -1302,6 +1303,11 @@ const PRODUCTS = [
   { id:142,cat:"שמפניה", name:"מום קורדון רוז' ברוט – 750 מ\"ל",           buy:88,  sell:130 },
   { id:143,cat:"שמפניה", name:"מרטיני פרוסקו – 750 מ\"ל",                  buy:35,  sell:55  },
   { id:144,cat:"שמפניה", name:"פרשינט קאבה קורדון נגרו – 750 מ\"ל",        buy:28,  sell:44  },
+
+  // ── מיקסרים ────────────────────────────────────
+  { id:400,cat:"מיקסרים", name:"חמוציות",                                    buy:8.3, sell:13, max:14 },
+  { id:401,cat:"מיקסרים", name:"ראשן",                                       buy:8.3, sell:12, max:14 },
+  { id:402,cat:"מיקסרים", name:"טוניק",                                      buy:8.3, sell:12, max:14 },
 ];
 
 // ================================================================
@@ -1316,6 +1322,8 @@ let activeCat = "הכל";
 let mode      = "quote";    // "quote" | "order"
 
 PRODUCTS.forEach(p => { stockMap[p.id] = true; buyMap[p.id] = p.buy; sellMap[p.id] = p.sell; });
+// מוצרים עם noSell — סמן אוטומטית כ"לא במלאי" (לא למכור)
+PRODUCTS.forEach(p => { if (p.noSell) stockMap[p.id] = false; });
 
 function getAllProducts() { return PRODUCTS.concat(customProducts); }
 
@@ -1324,7 +1332,9 @@ function getAllProducts() { return PRODUCTS.concat(customProducts); }
 // ================================================================
 function loadBuyPrices() {
   try {
-    const saved = localStorage.getItem("amartef_buy_prices");
+    // v2 forces use of new PRODUCTS defaults (price update May 2026)
+    try { localStorage.removeItem("amartef_buy_prices"); } catch(e) {}
+    const saved = localStorage.getItem("amartef_buy_prices_v2");
     if (saved) {
       const parsed = JSON.parse(saved);
       Object.keys(parsed).forEach(k => {
@@ -1335,11 +1345,12 @@ function loadBuyPrices() {
   } catch(e) {}
 }
 function saveBuyPrices() {
-  try { localStorage.setItem("amartef_buy_prices", JSON.stringify(buyMap)); } catch(e) {}
+  try { localStorage.setItem("amartef_buy_prices_v2", JSON.stringify(buyMap)); } catch(e) {}
 }
 function loadSellPrices() {
   try {
-    const saved = localStorage.getItem("amartef_sell_prices");
+    try { localStorage.removeItem("amartef_sell_prices"); } catch(e) {}
+    const saved = localStorage.getItem("amartef_sell_prices_v2");
     if (saved) {
       const parsed = JSON.parse(saved);
       Object.keys(parsed).forEach(k => {
@@ -1350,7 +1361,7 @@ function loadSellPrices() {
   } catch(e) {}
 }
 function saveSellPrices() {
-  try { localStorage.setItem("amartef_sell_prices", JSON.stringify(sellMap)); } catch(e) {}
+  try { localStorage.setItem("amartef_sell_prices_v2", JSON.stringify(sellMap)); } catch(e) {}
 }
 
 // ================================================================

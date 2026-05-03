@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -624,17 +627,18 @@ const IMG_CONCURRENCY = 3; // עד 3 בועזית
 
 function loadImageCache() {
   try {
-    // v4 key: forces fresh fetch after fixing wrong Van Gogh / Don Julio 1942 images
-    const s = localStorage.getItem("amartef_img_cache_v4");
+    // v5 key: forced reset after adding 30+ new brand images
+    const s = localStorage.getItem("amartef_img_cache_v5");
     if (s) imageCache = JSON.parse(s);
     // Discard old caches
     try { localStorage.removeItem("amartef_img_cache"); } catch(e) {}
     try { localStorage.removeItem("amartef_img_cache_v2"); } catch(e) {}
     try { localStorage.removeItem("amartef_img_cache_v3"); } catch(e) {}
+    try { localStorage.removeItem("amartef_img_cache_v4"); } catch(e) {}
   } catch(e) {}
 }
 function saveImageCache() {
-  try { localStorage.setItem("amartef_img_cache_v4", JSON.stringify(imageCache)); } catch(e) {}
+  try { localStorage.setItem("amartef_img_cache_v5", JSON.stringify(imageCache)); } catch(e) {}
 }
 
 function enqueueBottleImage(pid, productName) {
@@ -697,15 +701,34 @@ function _getCocktailDBUrl(name) {
     ["גריי גוס",       "https://images.openfoodfacts.org/images/products/008/048/028/0017/front_en.18.400.jpg"],
     ["בלבדר",          "https://images.openfoodfacts.org/images/products/590/186/781/6641/front_en.3.400.jpg"],
     ["סטוליצ'נאיה",    "https://images.openfoodfacts.org/images/products/475/002/100/0065/front_de.3.400.jpg"],
+    ["רוסיאן סטנדרד",  "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Russian_Standard_Original.jpg/300px-Russian_Standard_Original.jpg"],
+    ["בלוגה",          "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Beluga_Noble_Vodka.jpg/300px-Beluga_Noble_Vodka.jpg"],
+    ["סירוק",          "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Ciroc.png/220px-Ciroc.png"],
+    ["קטל וואן",       "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Ketel_One_Vodka.jpg/220px-Ketel_One_Vodka.jpg"],
+    ["פינלנדיה",       "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Finlandia_Classic_vodka.jpg/300px-Finlandia_Classic_vodka.jpg"],
     // ואן גוך + אריסטוף — let Wikipedia fallback handle (real bottle images)
     // ── Whiskey / Bourbon / Scotch ────────────────────────
     ["ג'ק דניאלס",     CDB("Jack Daniels")],
     ["ג'וני ווקר",     "https://images.openfoodfacts.org/images/products/500/026/701/4203/front_en.10.400.jpg"],
     ["צ'יבס ריגל",     "https://images.openfoodfacts.org/images/products/008/043/240/2931/front_en.5.400.jpg"],
+    ["צ'יבס",          "https://images.openfoodfacts.org/images/products/008/043/240/2931/front_en.5.400.jpg"],
     ["ג'יימסון",       "https://images.openfoodfacts.org/images/products/501/100/700/3227/front_ru.7.400.jpg"],
     ["גלנפידיך",       "https://images.openfoodfacts.org/images/products/501/032/700/0176/front_en.28.400.jpg"],
+    ["גלנליבט",        "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Glenlivet_12_year_old_single_malt.jpg/220px-Glenlivet_12_year_old_single_malt.jpg"],
     ["מקאלן",          "https://images.openfoodfacts.org/images/products/501/031/410/1107/front_fr.16.400.jpg"],
     ["מאקאלן",         "https://images.openfoodfacts.org/images/products/501/031/410/1107/front_fr.16.400.jpg"],
+    ["מאנקי שולדר",    "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Monkey_Shoulder_Whisky.jpg/220px-Monkey_Shoulder_Whisky.jpg"],
+    ["בלנטיינס",       "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Ballantine%27s_Finest.jpg/220px-Ballantine%27s_Finest.jpg"],
+    ["דיוורס",         "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Bottle_of_Dewar%27s_whisky.jpg/220px-Bottle_of_Dewar%27s_whisky.jpg"],
+    ["פיימס גראוס",    "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/The_Famous_Grouse_70cl.jpg/220px-The_Famous_Grouse_70cl.jpg"],
+    ["גרנטס",          "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Grant%27s_Whisky_Bottle.jpg/220px-Grant%27s_Whisky_Bottle.jpg"],
+    ["ויליאם לוסון",   "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/William_Lawson%27s_bottle.jpg/220px-William_Lawson%27s_bottle.jpg"],
+    ["לפרויג",         "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Laphroaig_10_Year_Old.jpg/220px-Laphroaig_10_Year_Old.jpg"],
+    ["מייקרס מארק",    "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Maker%27s_Mark_bottle.jpg/220px-Maker%27s_Mark_bottle.jpg"],
+    ["ג'ים ביים",      "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Jim_Beam_White_Label.jpg/220px-Jim_Beam_White_Label.jpg"],
+    ["ווילד טרקי",     "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Wild_Turkey_101_Bourbon.jpg/220px-Wild_Turkey_101_Bourbon.jpg"],
+    ["טולמור דיו",     "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Tullamore_DEW_Original_bottle.jpg/220px-Tullamore_DEW_Original_bottle.jpg"],
+    ["רויאל סאלוט",    "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Royal_Salute_scotch_whiskey.jpg/220px-Royal_Salute_scotch_whiskey.jpg"],
     // ── Tequila ───────────────────────────────────────────
     ["פטרון",          "https://images.openfoodfacts.org/images/products/324/834/005/4063/front_fr.193.400.jpg"],
     ["חוסה קוארבו",    "https://images.openfoodfacts.org/images/products/750/103/501/0093/front_fr.3.400.jpg"],
@@ -713,18 +736,41 @@ function _getCocktailDBUrl(name) {
     // Don Julio 1942 — distinctive brown bottle (most specific first)
     ["דון חוליו 1942", "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Don_Julio_1942_Tequila.jpg/300px-Don_Julio_1942_Tequila.jpg"],
     ["דון חוליו",      "https://images.openfoodfacts.org/images/products/500/028/105/6265/front_es.11.400.jpg"],
+    ["1800",           "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/1800_Tequila_Reserva.jpg/220px-1800_Tequila_Reserva.jpg"],
+    ["אספולון",        "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Espolon_Tequila_Blanco.jpg/220px-Espolon_Tequila_Blanco.jpg"],
+    ["קלאסה אזול",     "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Clase_Azul_Reposado_Tequila.jpg/220px-Clase_Azul_Reposado_Tequila.jpg"],
+    ["אולמקה",         "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Olmeca_Tequila_Bottle.jpg/220px-Olmeca_Tequila_Bottle.jpg"],
     // ── Gin ───────────────────────────────────────────────
     ["הנדריקס",        "https://images.openfoodfacts.org/images/products/501/032/775/5014/front_en.11.400.jpg"],
     ["טנקראי",         "https://images.openfoodfacts.org/images/products/500/029/102/5510/front_es.23.400.jpg"],
     ["בומביי",         "https://images.openfoodfacts.org/images/products/501/067/771/4006/front_en.69.400.jpg"],
+    ["ביפיטר",         "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/BEEFEATER2022_%28cropped%29.jpg/220px-BEEFEATER2022_%28cropped%29.jpg"],
+    ["גורדונס",        "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Gordons_London_Dry_Gin_im_Regal.jpg/220px-Gordons_London_Dry_Gin_im_Regal.jpg"],
+    ["בוטניסט",        "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/The_Botanist_Islay_Dry_Gin_Bottle.jpg/220px-The_Botanist_Islay_Dry_Gin_Bottle.jpg"],
+    ["מאנקי 47",       "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Monkey_47_Schwarzwald_Dry_Gin.jpg/220px-Monkey_47_Schwarzwald_Dry_Gin.jpg"],
+    ["רוקו",           "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Roku_Japanese_Craft_Gin.jpg/220px-Roku_Japanese_Craft_Gin.jpg"],
     // ── Rum ───────────────────────────────────────────────
     ["בקארדי",         CDB("Bacardi")],
     ["בקרדי",          CDB("Bacardi")],
+    ["קפטן מורגן",     "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Captain_Morgan_Original_Spiced.jpg/220px-Captain_Morgan_Original_Spiced.jpg"],
     ["הוואנה קלאב",    "https://images.openfoodfacts.org/images/products/850/111/008/6196/front_fr.9.400.jpg"],
     ["מליבו",          "https://images.openfoodfacts.org/images/products/841/002/470/0015/front_en.34.400.jpg"],
+    ["דיפלומטיקו",     "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Diplomatico_Reserva_Exclusiva.jpg/220px-Diplomatico_Reserva_Exclusiva.jpg"],
+    ["אפלטון",         "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Appleton_Estate_Signature_Blend.jpg/220px-Appleton_Estate_Signature_Blend.jpg"],
+    // ── Arak ──────────────────────────────────────────────
+    ["ערק 777",        "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Arak_777_Elite.jpg/220px-Arak_777_Elite.jpg"],
+    ["ערק",            "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Arak_bottle.jpg/220px-Arak_bottle.jpg"],
     // ── Champagne ─────────────────────────────────────────
     ["מואה שאנדון",    "https://images.openfoodfacts.org/images/products/318/537/072/9960/front_de.3.400.jpg"],
     ["מואה",           "https://images.openfoodfacts.org/images/products/318/537/072/9960/front_de.3.400.jpg"],
+    ["וב קליקו",       "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Veuve_Clicquot_Yellow_Label.jpg/220px-Veuve_Clicquot_Yellow_Label.jpg"],
+    ["מום",            "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/G.H._Mumm_Cordon_Rouge_Brut.jpg/220px-G.H._Mumm_Cordon_Rouge_Brut.jpg"],
+    ["מרטיני",         "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Martini_Extra_Dry_7408.jpg/220px-Martini_Extra_Dry_7408.jpg"],
+    ["פרשינט",         "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Freixenet_Cordon_Negro_Brut.jpg/220px-Freixenet_Cordon_Negro_Brut.jpg"],
+    // ── Mixers ────────────────────────────────────────────
+    ["חמוציות",        "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Cranberry_juice.jpg/220px-Cranberry_juice.jpg"],
+    ["ראשן",           "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Ginger_ale_can.jpg/220px-Ginger_ale_can.jpg"],
+    ["טוניק",          "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Schweppes_tonic_water.jpg/220px-Schweppes_tonic_water.jpg"],
   ];
   // Proxy all URLs through images.weserv.nl – bypasses hotlink/CORS blocks from any domain
   const proxy = (url) => "https://images.weserv.nl/?url=" + url.replace(/^https?:\/\//, "") + "&w=400";

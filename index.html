@@ -624,16 +624,17 @@ const IMG_CONCURRENCY = 3; // עד 3 בועזית
 
 function loadImageCache() {
   try {
-    // v3 key: forces fresh fetch (v2 may have cached unverified URLs that fail in browser)
-    const s = localStorage.getItem("amartef_img_cache_v3");
+    // v4 key: forces fresh fetch after fixing wrong Van Gogh / Don Julio 1942 images
+    const s = localStorage.getItem("amartef_img_cache_v4");
     if (s) imageCache = JSON.parse(s);
     // Discard old caches
     try { localStorage.removeItem("amartef_img_cache"); } catch(e) {}
     try { localStorage.removeItem("amartef_img_cache_v2"); } catch(e) {}
+    try { localStorage.removeItem("amartef_img_cache_v3"); } catch(e) {}
   } catch(e) {}
 }
 function saveImageCache() {
-  try { localStorage.setItem("amartef_img_cache_v3", JSON.stringify(imageCache)); } catch(e) {}
+  try { localStorage.setItem("amartef_img_cache_v4", JSON.stringify(imageCache)); } catch(e) {}
 }
 
 function enqueueBottleImage(pid, productName) {
@@ -696,8 +697,7 @@ function _getCocktailDBUrl(name) {
     ["גריי גוס",       "https://images.openfoodfacts.org/images/products/008/048/028/0017/front_en.18.400.jpg"],
     ["בלבדר",          "https://images.openfoodfacts.org/images/products/590/186/781/6641/front_en.3.400.jpg"],
     ["סטוליצ'נאיה",    "https://images.openfoodfacts.org/images/products/475/002/100/0065/front_de.3.400.jpg"],
-    ["ואן גוך",        CDB("Absolut Vodka")],
-    ["אריסטוף",        CDB("Absolut Vodka")],
+    // ואן גוך + אריסטוף — let Wikipedia fallback handle (real bottle images)
     // ── Whiskey / Bourbon / Scotch ────────────────────────
     ["ג'ק דניאלס",     CDB("Jack Daniels")],
     ["ג'וני ווקר",     "https://images.openfoodfacts.org/images/products/500/026/701/4203/front_en.10.400.jpg"],
@@ -710,6 +710,8 @@ function _getCocktailDBUrl(name) {
     ["פטרון",          "https://images.openfoodfacts.org/images/products/324/834/005/4063/front_fr.193.400.jpg"],
     ["חוסה קוארבו",    "https://images.openfoodfacts.org/images/products/750/103/501/0093/front_fr.3.400.jpg"],
     ["סאוזה",          "https://images.openfoodfacts.org/images/products/008/769/201/3785/front_en.3.400.jpg"],
+    // Don Julio 1942 — distinctive brown bottle (most specific first)
+    ["דון חוליו 1942", "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Don_Julio_1942_Tequila.jpg/300px-Don_Julio_1942_Tequila.jpg"],
     ["דון חוליו",      "https://images.openfoodfacts.org/images/products/500/028/105/6265/front_es.11.400.jpg"],
     // ── Gin ───────────────────────────────────────────────
     ["הנדריקס",        "https://images.openfoodfacts.org/images/products/501/032/775/5014/front_en.11.400.jpg"],
@@ -1054,7 +1056,7 @@ function openGoogleImageSearch() {
   if (_imgPickerPid == null) return;
   const p = PRODUCTS.concat(customProducts || []).find(x => x.id === _imgPickerPid);
   if (!p) return;
-  const q = encodeURIComponent(p.name + " bottle");
+  const q = encodeURIComponent("בקבוק אלכוהול " + p.name);
   window.open("https://www.google.com/search?tbm=isch&q=" + q, "_blank");
 }
 function saveProductImage() {

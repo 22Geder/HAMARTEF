@@ -7,12 +7,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="theme-color" content="#1c0e01" />
-  <title>AMARTEF House Of Alcohol – הצעות מחיר</title>
+  <title>AMARTEF – הצעות מחיר</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icon.svg" />
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
-  <!-- html2pdf לאמת הורדת PDF (לא הדפסה) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     :root {
       --gold:   #b08a2a;
@@ -79,14 +77,26 @@
     .settings-test { padding:11px 16px; border-radius:10px; background:transparent; border:1px solid var(--gold); color:var(--gold); font-size:0.88rem; font-weight:700; cursor:pointer; font-family:'Heebo',Arial,sans-serif; transition:all 0.15s; }
     .settings-test:hover { background:rgba(176,138,42,0.15); }
     .settings-close { padding:11px 16px; border-radius:10px; background:transparent; border:1px solid rgba(244,236,218,0.2); color:rgba(244,236,218,0.5); font-size:0.88rem; font-weight:700; cursor:pointer; font-family:'Heebo',Arial,sans-serif; transition:all 0.15s; }
-    .settings-clear { padding:11px 16px; border-radius:10px; background:rgba(183,28,28,0.7); border:1px solid rgba(183,28,28,0.9); color:#fff; font-size:0.88rem; font-weight:700; cursor:pointer; font-family:'Heebo',Arial,sans-serif; transition:all 0.15s; }
     .settings-status { margin-top:12px; padding:10px 14px; border-radius:9px; font-size:0.8rem; font-weight:600; display:none; }
     .settings-status.ok { background:rgba(30,126,52,0.2); border:1px solid rgba(30,126,52,0.5); color:#4caf50; display:block; }
     .settings-status.err { background:rgba(184,50,50,0.2); border:1px solid rgba(184,50,50,0.5); color:#f44; display:block; }
     .img-status-badge { position:absolute; bottom:2px; left:2px; font-size:0.58rem; background:rgba(0,0,0,0.55); color:#fff; border-radius:4px; padding:1px 4px; }
 
+    /* ─── ADD PRODUCT ────────────────────────────── */
+    .add-product-btn { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:10px 14px; border-radius:11px; border:1.5px dashed var(--gold); background:rgba(176,138,42,0.06); color:var(--gold2); font-size:0.85rem; font-weight:700; font-family:'Heebo',Arial,sans-serif; cursor:pointer; transition:all 0.18s; margin-bottom:14px; }
+    .add-product-btn:hover { background:rgba(176,138,42,0.14); border-style:solid; }
+    .pcard-del-btn { position:absolute; top:6px; left:6px; background:rgba(230,57,70,0.12); border:1px solid rgba(230,57,70,0.3); border-radius:6px; color:var(--red); cursor:pointer; width:24px; height:24px; font-size:0.78rem; display:flex; align-items:center; justify-content:center; transition:all 0.15s; padding:0; }
+    .pcard-del-btn:hover { background:var(--red); color:#fff; border-color:var(--red); }
+    .np-field { margin-bottom:13px; }
+    .np-field label { display:block; font-size:0.75rem; font-weight:700; color:var(--gold); margin-bottom:5px; text-transform:uppercase; letter-spacing:0.5px; }
+    .np-field input, .np-field select { width:100%; padding:10px 12px; border-radius:9px; border:1px solid rgba(176,138,42,0.4); background:rgba(255,255,255,0.06); color:#fff; font-size:0.85rem; font-family:'Heebo',Arial,sans-serif; }
+    .np-field input:focus, .np-field select:focus { outline:none; border-color:var(--gold); }
+    .np-field input::placeholder { color:rgba(244,236,218,0.3); }
+    .np-field select option { background:#1c1006; color:#fff; }
+    .np-row2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+
     /* ─── LAYOUT ──────────────────────────────────── */
-    .layout { display: flex; height: calc(100vh - 108px); overflow: hidden; }
+    .layout { display: flex; height: calc(100vh - 64px); overflow: hidden; }
 
     /* ─── QUOTE PANEL (right in RTL) ──────────────── */
     .qpanel { width: var(--sw); flex-shrink: 0; display: flex; flex-direction: column; background: var(--card2); border-left: 1px solid var(--border); overflow: hidden; }
@@ -166,24 +176,20 @@
     .pgrid { display: grid; grid-template-columns: repeat(auto-fill,minmax(170px,1fr)); gap: 12px; margin-bottom: 6px; }
 
     /* ─── PRODUCT CARD ────────────────────────────── */
-    .price-ref-row { display:flex; justify-content:space-between; font-size:0.68rem; color:var(--muted); margin:3px 0 4px; background:rgba(255,255,255,0.04); border-radius:6px; padding:3px 6px; gap:4px; }
-    .price-ref-row .pr-item { display:flex; flex-direction:column; align-items:center; flex:1; }
-    .price-ref-row .pr-item span { font-size:0.6rem; opacity:0.7; }
-    .price-ref-row .pr-item b { color:var(--gold); font-size:0.75rem; }
-    
     .pcard { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 11px; display: flex; flex-direction: column; gap: 7px; transition: all 0.2s; position: relative; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
     .pcard:hover { border-color: rgba(176,138,42,0.7); background: var(--card2); transform: translateY(-2px); box-shadow: 0 10px 28px rgba(176,138,42,0.18); }
     .pcard.no-stock { opacity: 0.42; filter: grayscale(0.7); }
     .pcard.no-stock .add-btn { background: #333 !important; color: #666 !important; cursor: not-allowed; }
 
     /* stock toggle */
-    .stock-row { display: flex; justify-content: center; }
-    .stock-btn { font-size: 0.67rem; font-weight: 700; font-family: 'Heebo',Arial,sans-serif; border: none; border-radius: 20px; padding: 3px 10px; cursor: pointer; transition: all 0.18s; }
-    .stock-btn.in  { background: rgba(176,138,42,0.12);  color: var(--gold); }
-    .stock-btn.out { background: rgba(184,50,50,0.10);   color: var(--red); }
+    .stock-row { display: flex; justify-content: center; margin-bottom: 2px; }
+    .stock-btn { font-size: 1.1rem; font-weight: 900; border: 2px solid; border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.18s; padding: 0; line-height: 1; }
+    .stock-btn.in  { background: rgba(40,180,80,0.13);  color: #28b450; border-color: #28b450; }
+    .stock-btn.out { background: rgba(184,50,50,0.10);  color: var(--red); border-color: var(--red); }
 
     /* bottle image */
-    .p-bottle { display: block; width: 80px; height: 140px; margin: 0 auto; object-fit: contain; }
+    .p-bottle { display: block; width: 80px; height: 120px; margin: 4px auto; object-fit: contain; cursor: pointer; transition: transform 0.15s; }
+    .p-bottle:hover { transform: scale(1.08); }
 
     .p-name { font-size: 0.77rem; font-weight: 600; text-align: center; line-height: 1.4; min-height: 32px; display: flex; align-items: center; justify-content: center; }
     .p-prices { display: flex; justify-content: space-between; align-items: center; background: rgba(201,162,39,0.07); border-radius: 7px; padding: 5px 9px; font-size: 0.72rem; }
@@ -191,8 +197,8 @@
     .p-buy b { color: var(--text); }
     .p-sell-lbl { color: var(--gold); font-weight: 800; font-size: 0.82rem; }
 
-    .sell-row { display: flex; align-items: center; gap: 4px; }
-    .sell-row label { font-size: 0.65rem; color: var(--muted); white-space: nowrap; min-width: 36px; text-align: right; }
+    .sell-row { display: flex; align-items: center; gap: 5px; }
+    .sell-row label { font-size: 0.69rem; color: var(--muted); white-space: nowrap; }
     .buy-inp { border-color: rgba(176,138,42,0.45) !important; color: var(--amber) !important; }
     .buy-inp:focus { border-color: var(--gold) !important; }
     .sell-inp { flex: 1; padding: 5px 6px; border-radius: 7px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 0.8rem; font-family: 'Heebo',Arial,sans-serif; text-align: center; transition: border-color 0.15s; }
@@ -302,47 +308,39 @@
       .cust-grid { grid-template-columns: 1fr; }
     }
 
-    /* ─── TOOLBAR ─────────────────────────────────── */
-    .toolbar { background:#1f0d01; border-bottom:1px solid rgba(176,138,42,0.18); display:flex; align-items:center; padding:0 20px; height:44px; gap:5px; position:sticky; top:64px; z-index:290; }
-    .tb-btn { padding:5px 14px; border-radius:8px; border:1px solid transparent; background:transparent; color:rgba(244,236,218,0.5); font-family:'Heebo',Arial,sans-serif; font-size:0.82rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:5px; transition:all 0.15s; white-space:nowrap; text-decoration:none; }
-    .tb-btn:hover { background:rgba(176,138,42,0.1); color:var(--gold2); border-color:rgba(176,138,42,0.25); }
-    .tb-btn.tb-active { background:rgba(176,138,42,0.13); color:var(--gold2); border-color:rgba(176,138,42,0.35); font-weight:700; }
-    .tb-spacer { flex:1; }
+    /* ─── עריכת פריט בסל ─────────────────────────── */
+    .qi-edit-btn { background:rgba(176,138,42,0.12); border:none; border-radius:5px; color:var(--gold); cursor:pointer; width:22px; height:22px; font-size:0.75rem; display:flex; align-items:center; justify-content:center; transition:all 0.15s; padding:0; }
+    .qi-edit-btn:hover { background:var(--gold); color:var(--hdr); }
+    .qitem-editing { border-color:var(--gold) !important; background:rgba(176,138,42,0.07) !important; flex-direction:column; align-items:stretch; gap:8px; }
+    .qitem-edit-body { display:flex; flex-direction:column; gap:6px; }
+    .qitem-edit-row { display:flex; align-items:center; gap:8px; }
+    .qitem-edit-row label { font-size:0.72rem; color:var(--muted); min-width:72px; flex-shrink:0; }
+    .qitem-edit-inp { flex:1; padding:5px 8px; border-radius:7px; border:1px solid var(--gold); background:var(--bg); color:var(--text); font-size:0.85rem; font-family:'Heebo',Arial,sans-serif; text-align:center; }
+    .qitem-edit-inp:focus { outline:none; }
+    .qitem-edit-actions { display:flex; gap:6px; margin-top:2px; }
+    .qitem-edit-save { flex:1; padding:7px; border-radius:8px; background:var(--gold); border:none; color:var(--hdr); font-size:0.8rem; font-weight:700; cursor:pointer; font-family:'Heebo',Arial,sans-serif; }
+    .qitem-edit-cancel { padding:7px 12px; border-radius:8px; background:transparent; border:1px solid rgba(244,236,218,0.2); color:rgba(244,236,218,0.5); font-size:0.8rem; cursor:pointer; font-family:'Heebo',Arial,sans-serif; }
 
-    /* ─── HISTORY MODAL ───────────────────────────── */
-    .hist-overlay { display:none; position:fixed; inset:0; background:rgba(28,14,1,0.85); z-index:600; align-items:flex-start; justify-content:center; padding:30px 16px; overflow-y:auto; }
-    .hist-overlay.open { display:flex; }
-    .hist-modal { background:var(--card); border:1px solid var(--border); border-radius:18px; width:100%; max-width:740px; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 24px 70px #000c; }
-    .hist-hdr { padding:18px 22px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-shrink:0; background:#1c0e01; flex-wrap:wrap; gap:8px; }
-    .hist-hdr h3 { font-size:1rem; font-weight:800; color:var(--gold2); }
-    .hist-hdr-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
-    .hist-close { background:rgba(230,57,70,0.15); border:none; border-radius:8px; color:var(--red); font-size:1rem; cursor:pointer; width:36px; height:36px; display:flex; align-items:center; justify-content:center; transition:all 0.15s; }
-    .hist-close:hover { background:var(--red); color:#fff; }
-    .hist-search { padding:6px 11px; border-radius:8px; border:1px solid var(--border); background:rgba(244,236,218,0.1); color:#f4ecda; font-size:0.8rem; font-family:'Heebo',Arial,sans-serif; width:190px; }
-    .hist-search:focus { outline:none; border-color:var(--gold); }
-    .hist-search::placeholder { color:rgba(176,138,42,0.6); }
-    .hist-body { overflow-y:auto; padding:16px 22px; max-height:72vh; }
-    .hist-body::-webkit-scrollbar { width:4px; }
-    .hist-body::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
-    .hist-empty { text-align:center; color:var(--muted); padding:60px 20px; font-size:0.9rem; }
-    .hist-entry { background:var(--card2); border:1px solid var(--border); border-radius:12px; margin-bottom:10px; overflow:hidden; transition:border-color 0.15s; }
-    .hist-entry:hover { border-color:rgba(201,162,39,0.35); }
-    .hist-entry-hdr { padding:12px 16px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; gap:10px; }
-    .hist-entry-meta { flex:1; min-width:0; }
-    .hist-entry-title { font-size:0.85rem; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .hist-entry-sub { font-size:0.72rem; color:var(--muted); margin-top:3px; }
-    .hist-entry-right { display:flex; align-items:center; gap:8px; flex-shrink:0; }
-    .hist-entry-total { font-size:0.95rem; font-weight:800; color:var(--gold); }
-    .hist-type-badge { font-size:0.7rem; background:rgba(201,162,39,0.12); border:1px solid rgba(201,162,39,0.3); color:var(--gold); border-radius:6px; padding:2px 8px; white-space:nowrap; }
-    .hist-del-btn { background:rgba(230,57,70,0.1); border:none; border-radius:6px; color:var(--red); cursor:pointer; width:28px; height:28px; font-size:0.78rem; display:flex; align-items:center; justify-content:center; transition:all 0.15s; }
-    .hist-del-btn:hover { background:var(--red); color:#fff; }
-    .hist-entry-body { display:none; border-top:1px solid var(--border); padding:12px 16px; }
-    .hist-entry-body.open { display:block; }
-    .hist-item-line { font-size:0.76rem; color:var(--text); padding:4px 0; border-bottom:1px solid rgba(176,138,42,0.12); display:flex; justify-content:space-between; }
-    .hist-item-line:last-child { border-bottom:none; }
-    .hist-notes { font-size:0.75rem; color:var(--muted); margin-top:9px; font-style:italic; }
-    .hist-summary-row { display:flex; justify-content:space-between; font-size:0.8rem; color:var(--muted); margin-top:10px; padding-top:8px; border-top:1px solid var(--border); }
-    .hist-summary-total { font-weight:800; color:var(--gold); font-size:0.9rem; }
+    /* ─── הזמנות שמורות ──────────────────────────── */
+    .saved-order-item { background:rgba(176,138,42,0.06); border:1px solid rgba(176,138,42,0.2); border-radius:10px; padding:11px 13px; margin-bottom:8px; display:flex; align-items:center; gap:10px; transition:border-color 0.15s; }
+    .saved-order-item:hover { border-color:var(--gold); }
+    .so-info { flex:1; min-width:0; }
+    .so-name { font-size:0.85rem; font-weight:700; color:var(--dark); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .so-meta { font-size:0.72rem; color:rgba(244,236,218,0.5); margin-top:3px; }
+    .so-actions { display:flex; gap:6px; flex-shrink:0; }
+    .so-load { padding:6px 12px; border-radius:7px; background:var(--gold); border:none; color:var(--hdr); font-size:0.78rem; font-weight:700; cursor:pointer; font-family:'Heebo',Arial,sans-serif; }
+    .so-del  { padding:6px 8px; border-radius:7px; background:rgba(230,57,70,0.13); border:1px solid rgba(230,57,70,0.3); color:var(--red); font-size:0.78rem; cursor:pointer; font-family:'Heebo',Arial,sans-serif; }
+
+    /* ─── הנחה ורווח ─────────────────────────────── */
+    .trow-discount { display:flex; justify-content:space-between; align-items:center; font-size:0.8rem; color:rgba(244,236,218,0.55); padding:4px 0; }
+    .discount-inp { width:52px; padding:3px 6px; border-radius:6px; border:1px solid rgba(176,138,42,0.4); background:rgba(255,255,255,0.08); color:#fff; font-size:0.82rem; font-family:'Heebo',Arial,sans-serif; text-align:center; }
+    .discount-inp:focus { outline:none; border-color:var(--gold); }
+    .trow-profit { color:rgba(100,210,130,0.9) !important; }
+    .trow-profit span:last-child { color:rgba(100,210,130,0.9) !important; }
+
+    /* ─── כפתורי שמור / שמורות ───────────────────── */
+    .abtn-save  { background:linear-gradient(135deg,#1b5e20,#2e7d32); color:#fff; }
+    .abtn-saved { background:rgba(176,138,42,0.14); border:1px solid rgba(176,138,42,0.4) !important; color:var(--gold2); }
   </style>
 </head>
 <body>
@@ -370,41 +368,129 @@
   </div>
   <div class="hdr-right no-print">
     <div class="hdr-date" id="hdrDate"></div>
-    <button class="settings-btn" onclick="openSettings()" title="הגדרות">⚙️</button>
+    <button class="settings-btn" onclick="openSettings()" title="הגדרות תמונות">⚙️</button>
   </div>
 </header>
 
+<!-- Settings Modal -->
 <div class="settings-overlay" id="settingsOverlay" onclick="if(event.target===this)closeSettings()">
   <div class="settings-modal">
-    <h2>⚙️ הגדרות תמונות</h2>
-    <p>כדי שתמונות בקבוקים יופיעו אוטומטית, נדרש מפתח Gemini API (חינמי).</p>
+    <h2>🖼️ הגדרות תמונות בקבוקים</h2>
+    <p>הדבק את <strong>Gemini API Key</strong> שלך — התוכנה תחפש תמונות בקבוקים אוטומטית דרך Google.</p>
+
     <div class="settings-steps">
       <ol>
-        <li>עבור ל־<a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a></li>
-        <li>לחץ "Create API Key"</li>
-        <li>העתק את המפתח והדבק למטה</li>
+        <li>כנס ל: <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a></li>
+        <li>לחץ <strong>"Create API key"</strong></li>
+        <li>בחר פרויקט (או צור חדש) → לחץ <strong>Create API key in existing project</strong></li>
+        <li>העתק את המפתח (AIzaSy...)</li>
+        <li>הדבק כאן ולחץ <strong>שמור</strong></li>
       </ol>
     </div>
+
     <div class="settings-field">
-      <label>Gemini API Key</label>
-      <input type="password" id="settingsKey" placeholder="AIza..." />
+      <label>🔑 Gemini API Key</label>
+      <input type="password" id="settingsApiKey" placeholder="AIzaSy..." />
     </div>
+
     <div class="settings-actions">
-      <button class="settings-save" onclick="saveSettings()">שמור</button>
-      <button class="settings-test" onclick="testSettings()">בדוק</button>
-      <button class="settings-clear" onclick="clearImageCache()">🗑️ נקה תמונות</button>
+      <button class="settings-save" onclick="saveSettings()">💾 שמור והתחל חיפוש</button>
+      <button class="settings-test" onclick="testSettings()">🧪 בדוק</button>
       <button class="settings-close" onclick="closeSettings()">סגור</button>
     </div>
     <div class="settings-status" id="settingsStatus"></div>
+    <p style="margin-top:14px;font-size:0.72rem;color:rgba(244,236,218,0.35);">2,500 חיפושים חינם. לאחר הטעינה הראשונה התמונות נשמרות — אין צורך בחיפוש נוסף.</p>
   </div>
 </div>
 
-<nav class="toolbar no-print">
-  <a class="tb-btn tb-active" href="index.html">📋 הצעות מחיר</a>
-  <a class="tb-btn" href="supplier-order.html">📦 הזמנה מספק</a>
-  <div class="tb-spacer"></div>
-  <button class="tb-btn" onclick="openHistory()">📜 היסטוריה</button>
-</nav>
+<!-- Image Picker Modal -->
+<div class="settings-overlay" id="imgPickerOverlay" onclick="if(event.target===this)closeImagePicker()">
+  <div class="settings-modal">
+    <h2>🖼️ שיוך תמונה למוצר</h2>
+    <p id="imgPickerName" style="font-weight:bold;color:#d4af37;"></p>
+    <div class="settings-steps">
+      <ol>
+        <li>לחץ <strong>"חפש בגוגל תמונות"</strong> — ייפתח חיפוש בלשונית חדשה</li>
+        <li>בחר תמונה מתאימה, לחץ עליה קליק <strong>ימני</strong> → <strong>"העתק כתובת תמונה"</strong></li>
+        <li>חזור לכאן והדבק (Ctrl+V) בשדה למטה</li>
+        <li>לחץ <strong>"שמור"</strong></li>
+      </ol>
+    </div>
+    <div class="settings-actions" style="margin-bottom:10px;">
+      <button class="settings-save" onclick="openGoogleImageSearch()">🔎 חפש בגוגל תמונות</button>
+    </div>
+    <div class="settings-field">
+      <label>📋 הדבק כאן את כתובת התמונה</label>
+      <input type="text" id="imgPickerUrl" placeholder="https://..." dir="ltr" />
+    </div>
+    <div class="settings-actions">
+      <button class="settings-save" onclick="saveProductImage()">💾 שמור</button>
+      <button class="settings-test" onclick="clearProductImage()">🗑 נקה תמונה</button>
+      <button class="settings-close" onclick="closeImagePicker()">סגור</button>
+    </div>
+    <div class="settings-status" id="imgPickerStatus"></div>
+  </div>
+</div>
+
+<!-- Add Product Modal -->
+<div class="settings-overlay" id="addProductOverlay" onclick="if(event.target===this)closeAddProduct()">
+  <div class="settings-modal">
+    <h2>➕ הוסף בקבוק חדש</h2>
+    <p>הוסף בקבוק שאינו ברשימה — עם מחיר קנייה, מכירה ותמונה.</p>
+
+    <div class="np-field">
+      <label>🍾 שם הבקבוק</label>
+      <input type="text" id="npName" placeholder="לדוגמה: ג׳ק דניאלס טנסי הוני – 700 מ&quot;ל" />
+    </div>
+
+    <div class="np-field">
+      <label>📂 קטגוריה</label>
+      <select id="npCat" onchange="onNpCatChange()"></select>
+    </div>
+
+    <div class="np-field" id="npNewCatRow" style="display:none">
+      <label>✏️ שם קטגוריה חדשה + אייקון</label>
+      <div style="display:grid;grid-template-columns:1fr 60px;gap:8px">
+        <input type="text" id="npNewCatName" placeholder="שם הקטגוריה" />
+        <input type="text" id="npNewCatIcon" placeholder="🍷" maxlength="2" style="text-align:center;font-size:1.2rem" />
+      </div>
+    </div>
+
+    <div class="np-row2">
+      <div class="np-field">
+        <label>💰 מחיר קנייה (₪)</label>
+        <input type="number" id="npBuy" min="0" placeholder="0" />
+      </div>
+      <div class="np-field">
+        <label>🏷️ מחיר מכירה (₪)</label>
+        <input type="number" id="npSell" min="0" placeholder="0" />
+      </div>
+    </div>
+
+    <div class="np-field">
+      <label>🖼️ כתובת תמונה (אופציונלי)</label>
+      <input type="url" id="npImgUrl" placeholder="https://..." />
+    </div>
+
+    <div class="settings-actions">
+      <button class="settings-save" onclick="saveNewProduct()">💾 הוסף לרשימה</button>
+      <button class="settings-close" onclick="closeAddProduct()">ביטול</button>
+    </div>
+    <div class="settings-status" id="npStatus"></div>
+  </div>
+</div>
+
+<!-- Saved Orders Modal -->
+<div class="settings-overlay" id="savedOrdersOverlay" onclick="if(event.target===this)closeSavedOrders()">
+  <div class="settings-modal">
+    <h2>📂 הזמנות שמורות</h2>
+    <p>טען הצעה או הזמנה שנשמרה, או מחק ממאגר השמורות.</p>
+    <div id="savedOrdersList"></div>
+    <div class="settings-actions" style="margin-top:12px">
+      <button class="settings-close" onclick="closeSavedOrders()">סגור</button>
+    </div>
+  </div>
+</div>
 
 <div class="layout">
 
@@ -452,12 +538,22 @@
     <div class="totals" id="totalsSection" style="display:none">
       <div id="totQuote">
         <div class="trow"><span>סה"כ קנייה:</span>  <span id="tBuy">₪0.00</span></div>
+        <div class="trow trow-profit"><span>🟢 רווח:</span><span id="tProfit">₪0.00</span></div>
         <div class="trow"><span>סה"כ מכירה:</span> <span id="tSell">₪0.00</span></div>
+        <div class="trow-discount" id="discountRow">
+          <span>💸 הנחה:</span>
+          <div style="display:flex;align-items:center;gap:5px">
+            <input class="discount-inp" type="number" id="discountInput" min="0" max="100" step="1" value="0" oninput="onDiscountChange(this.value)" />
+            <span style="color:rgba(244,236,218,0.45);font-size:0.78rem">%</span>
+            <span id="discountAmt" style="color:#f06;font-size:0.78rem;font-weight:600"></span>
+          </div>
+        </div>
+        <div style="display:none"><span id="tVat"></span></div>
         <div class="trow big"><span>💰 סה"כ לתשלום ללקוח:</span><span id="tTotal">₪0.00</span></div>
       </div>
       <div id="totOrder" style="display:none">
-        <div class="trow"><span>סה"כ הזמנה:</span><span id="oBuy">₪0.00</span></div>
         <div class="trow big"><span>📦 סה"כ לספק:</span><span id="oTotal">₪0.00</span></div>
+        <div style="display:none"><span id="oBuy"></span><span id="oVat"></span></div>
       </div>
     </div>
 
@@ -471,11 +567,12 @@
         <button class="abtn abtn-pdf" onclick="downloadPDF()">📄 הורד PDF</button>
       </div>
       <div class="act-row">
-        <button class="abtn abtn-print" onclick="printQuote()">🖨️ הדפסה</button>
-        <button class="abtn abtn-pdf"   onclick="downloadWord()" style="background:linear-gradient(135deg,#1a4d8f,#2b6cb0)">📝 Word לעריכה</button>
+        <button class="abtn abtn-print" onclick="window.print()">🖨️ הדפסה</button>
+        <button class="abtn abtn-clear" onclick="clearQuote()">🗑️ נקה הצעה</button>
       </div>
       <div class="act-row">
-        <button class="abtn abtn-clear" onclick="clearQuote()">🗑️ נקה הצעה</button>
+        <button class="abtn abtn-save"  onclick="saveCurrentOrder()">💾 שמור הזמנה</button>
+        <button class="abtn abtn-saved" onclick="openSavedOrders()">📂 שמורות</button>
       </div>
     </div>
   </aside>
@@ -487,22 +584,10 @@
       <input type="text" id="searchBox" placeholder="חיפוש מוצר..." oninput="renderProducts()" />
     </div>
     <div class="tabs" id="tabs"></div>
+    <button class="add-product-btn no-print" onclick="openAddProduct()">➕ הוסף בקבוק חדש שאינו ברשימה</button>
     <div id="productsContainer"></div>
   </section>
 
-</div>
-
-<div class="hist-overlay no-print" id="histOverlay" onclick="overlayClose(event)">
-  <div class="hist-modal">
-    <div class="hist-hdr">
-      <h3>📜 היסטוריית הצעות והזמנות</h3>
-      <div class="hist-hdr-actions">
-        <input class="hist-search" id="histSearch" type="text" placeholder="🔍 שם / טלפון..." oninput="renderHistoryModal()" />
-        <button class="hist-close" onclick="closeHistory()">&#x2715;</button>
-      </div>
-    </div>
-    <div class="hist-body" id="histBody"></div>
-  </div>
 </div>
 
 <nav class="mob-nav no-print" id="mobNav">
@@ -525,24 +610,491 @@
 // ================================================================
 // קבועים
 // ================================================================
-const VAT = 0;
+const VAT = 0.17;
+
+// ================================================================
+// Google Custom Search – תמונות בקבוקים אוטומטיות באמצעות Gemini API
+// המפתחות מוזנים דרך כפתור ⚙️ בתוכנה
+// ================================================================
+
+let imageCache = {};  // pid → url
+let _imgQueue  = [];  // queue לטעינת תמונות בהדרגה
+let _imgRunning = 0;
+const IMG_CONCURRENCY = 3; // עד 3 בועזית
+
+function loadImageCache() {
+  try {
+    // v3 key: forces fresh fetch (v2 may have cached unverified URLs that fail in browser)
+    const s = localStorage.getItem("amartef_img_cache_v3");
+    if (s) imageCache = JSON.parse(s);
+    // Discard old caches
+    try { localStorage.removeItem("amartef_img_cache"); } catch(e) {}
+    try { localStorage.removeItem("amartef_img_cache_v2"); } catch(e) {}
+  } catch(e) {}
+}
+function saveImageCache() {
+  try { localStorage.setItem("amartef_img_cache_v3", JSON.stringify(imageCache)); } catch(e) {}
+}
+
+function enqueueBottleImage(pid, productName) {
+  _imgQueue.push({ pid, productName });
+  _pumpQueue();
+}
+function _pumpQueue() {
+  while (_imgRunning < IMG_CONCURRENCY && _imgQueue.length > 0) {
+    const { pid, productName } = _imgQueue.shift();
+    _imgRunning++;
+    _doFetch(pid, productName).finally(() => { _imgRunning--; _pumpQueue(); });
+  }
+}
+
+// ── Brand → verified direct image URL (TheCocktailDB OR OpenFoodFacts) ─
+// All URLs were empirically tested 2025 to return real, distinct product photos.
+function _getCocktailDBUrl(name) {
+  if (!name || typeof name !== 'string') return null;
+  const CDB = (n) => "https://www.thecocktaildb.com/images/ingredients/" + encodeURIComponent(n) + "-Small.png";
+  const map = [
+    // ── Vodka ─────────────────────────────────────────────
+    ["אבסולוט",        CDB("Absolut Vodka")],
+    ["סמירנוף",        "https://images.openfoodfacts.org/images/products/541/031/667/1118/front_en.34.400.jpg"],
+    ["גריי גוס",       "https://images.openfoodfacts.org/images/products/008/048/028/0017/front_en.18.400.jpg"],
+    ["בלבדר",          "https://images.openfoodfacts.org/images/products/590/186/781/6641/front_en.3.400.jpg"],
+    ["סטוליצ'נאיה",    "https://images.openfoodfacts.org/images/products/475/002/100/0065/front_de.3.400.jpg"],
+    ["ואן גוך",        CDB("Absolut Vodka")],
+    ["אריסטוף",        CDB("Absolut Vodka")],
+    // ── Whiskey / Bourbon / Scotch ────────────────────────
+    ["ג'ק דניאלס",     CDB("Jack Daniels")],
+    ["ג'וני ווקר",     "https://images.openfoodfacts.org/images/products/500/026/701/4203/front_en.10.400.jpg"],
+    ["צ'יבס ריגל",     "https://images.openfoodfacts.org/images/products/008/043/240/2931/front_en.5.400.jpg"],
+    ["ג'יימסון",       "https://images.openfoodfacts.org/images/products/501/100/700/3227/front_ru.7.400.jpg"],
+    ["גלנפידיך",       "https://images.openfoodfacts.org/images/products/501/032/700/0176/front_en.28.400.jpg"],
+    ["מקאלן",          "https://images.openfoodfacts.org/images/products/501/031/410/1107/front_fr.16.400.jpg"],
+    ["מאקאלן",         "https://images.openfoodfacts.org/images/products/501/031/410/1107/front_fr.16.400.jpg"],
+    // ── Tequila ───────────────────────────────────────────
+    ["פטרון",          "https://images.openfoodfacts.org/images/products/324/834/005/4063/front_fr.193.400.jpg"],
+    ["חוסה קוארבו",    "https://images.openfoodfacts.org/images/products/750/103/501/0093/front_fr.3.400.jpg"],
+    ["סאוזה",          "https://images.openfoodfacts.org/images/products/008/769/201/3785/front_en.3.400.jpg"],
+    ["דון חוליו",      "https://images.openfoodfacts.org/images/products/500/028/105/6265/front_es.11.400.jpg"],
+    // ── Gin ───────────────────────────────────────────────
+    ["הנדריקס",        "https://images.openfoodfacts.org/images/products/501/032/775/5014/front_en.11.400.jpg"],
+    ["טנקראי",         "https://images.openfoodfacts.org/images/products/500/029/102/5510/front_es.23.400.jpg"],
+    ["בומביי",         "https://images.openfoodfacts.org/images/products/501/067/771/4006/front_en.69.400.jpg"],
+    // ── Rum ───────────────────────────────────────────────
+    ["בקארדי",         CDB("Bacardi")],
+    ["בקרדי",          CDB("Bacardi")],
+    ["הוואנה קלאב",    "https://images.openfoodfacts.org/images/products/850/111/008/6196/front_fr.9.400.jpg"],
+    ["מליבו",          "https://images.openfoodfacts.org/images/products/841/002/470/0015/front_en.34.400.jpg"],
+    // ── Champagne ─────────────────────────────────────────
+    ["מואה שאנדון",    "https://images.openfoodfacts.org/images/products/318/537/072/9960/front_de.3.400.jpg"],
+    ["מואה",           "https://images.openfoodfacts.org/images/products/318/537/072/9960/front_de.3.400.jpg"],
+  ];
+  // Proxy all URLs through images.weserv.nl – bypasses hotlink/CORS blocks from any domain
+  const proxy = (url) => "https://images.weserv.nl/?url=" + url.replace(/^https?:\/\//, "") + "&w=400";
+  for (const [heb, url] of map) {
+    if (name.includes(heb)) return proxy(url);
+  }
+  return null;
+}
+
+// ── Test that an image URL actually loads (browser-native) ────
+function _verifyImage(url) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload  = () => resolve(url);
+    img.onerror = () => resolve(null);
+    img.src = url;
+  });
+}
+
+// ── Brand → Wikipedia article title mapping (fallback) ────────
+function _getBrandWikiTitle(name) {
+  const map = [
+    ["אבסולוט",        "Absolut Vodka"],
+    ["סמירנוף",        "Smirnoff"],
+    ["גריי גוס",       "Grey Goose (vodka)"],
+    ["בלבדר",          "Belvedere vodka"],
+    ["קטל וואן",       "Ketel One"],
+    ["סירוק",          "Cîroc"],
+    ["קריסטל הד",      "Crystal Head Vodka"],
+    ["פינלנדיה",       "Finlandia (vodka)"],
+    ["סטוליצ'נאיה",    "Stolichnaya"],
+    ["רוסיאן סטנדרט",  "Russian Standard (vodka)"],
+    ["ג'וני ווקר",     "Johnnie Walker"],
+    ["ג'ק דניאלס",     "Jack Daniel's"],
+    ["צ'יבס ריגל",     "Chivas Regal"],
+    ["ג'יימסון",       "Jameson whiskey"],
+    ["גלנפידיך",       "Glenfiddich"],
+    ["גלנליבט",        "The Glenlivet"],
+    ["מאנקי שולדר",    "Monkey Shoulder"],
+    ["בלנטיינס",       "Ballantine's"],
+    ["דיוורס",         "Dewar's"],
+    ["פיימס גראוס",    "The Famous Grouse"],
+    ["גרנטס",          "Grant's whisky"],
+    ["ויליאם לוסון",   "William Lawson's"],
+    ["לפרויג",         "Laphroaig"],
+    ["מייקרס מארק",    "Maker's Mark"],
+    ["ג'ים ביים",      "Jim Beam"],
+    ["ווילד טרקי",     "Wild Turkey (bourbon)"],
+    ["טולמור דיו",     "Tullamore D.E.W."],
+    ["רויאל סאלוט",    "Royal Salute whisky"],
+    ["ואן גוך",        "Van Gogh Vodka"],
+    ["הנדריקס",        "Hendrick's Gin"],
+    ["טנקראי",         "Tanqueray"],
+    ["בומביי",         "Bombay Sapphire"],
+    ["ביפיטר",         "Beefeater gin"],
+    ["גורדונס",        "Gordon's gin"],
+    ["בוטניסט",        "The Botanist (gin)"],
+    ["מאנקי 47",       "Monkey 47"],
+    ["רוקו",           "Roku gin"],
+    ["בקארדי",         "Bacardi"],
+    ["קפטן מורגן",     "Captain Morgan"],
+    ["הוואנה קלאב",    "Havana Club"],
+    ["דיפלומטיקו",     "Diplomatico"],
+    ["מליבו",          "Malibu (rum)"],
+    ["אפלטון",         "Appleton Estate"],
+    ["חוסה קוארבו",    "Jose Cuervo"],
+    ["אולמקה",         "Olmeca (tequila)"],
+    ["פטרון",          "Patrón"],
+    ["1800",           "1800 Tequila"],
+    ["אספולון",        "Espolòn"],
+    ["דון חוליו",      "Don Julio"],
+    ["קלאסה אזול",     "Clase Azul"],
+    ["מואה שאנדון",    "Moët & Chandon"],
+    ["וב קליקו",       "Veuve Clicquot"],
+    ["מום קורדון",     "G.H. Mumm"],
+    ["פרשינט",         "Freixenet"],
+    ["קמפרי",          "Campari"],
+    ["אפרול",          "Aperol"],
+    ["מרטיני",         "Martini (vermouth)"],
+  ];
+  for (const [heb, eng] of map) {
+    if (name.includes(heb)) return eng;
+  }
+  return null;
+}
+
+// ── Wikipedia free image lookup (no API key needed) ───────────
+async function _fetchWikipediaImage(wikiTitle) {
+  try {
+    const url = "https://en.wikipedia.org/w/api.php?action=query" +
+      "&prop=pageimages&format=json&pithumbsize=400&origin=*" +
+      "&titles=" + encodeURIComponent(wikiTitle);
+    const r = await fetch(url);
+    const d = await r.json();
+    const pages = Object.values(d?.query?.pages || {});
+    return pages[0]?.thumbnail?.source || null;
+  } catch(e) { return null; }
+}
+
+// ── Gemini batch fetch – ONE call for ALL unmapped products ──────────────────
+// Returns { productName: imageUrl, ... } for as many as Gemini could find
+let _geminiBatchDone = false;   // batch already ran (success or fail)
+let _geminiBatchPending = false; // batch currently in-flight
+
+async function _runGeminiBatch() {
+  const key = localStorage.getItem("amartef_gcs_key") || "";
+  if (!key || _geminiBatchDone || _geminiBatchPending) return;
+  _geminiBatchPending = true;
+
+  // Collect products that still need images (not cached, not in brand map)
+  const unmapped = PRODUCTS.filter(p => {
+    const cached = imageCache[p.id];
+    if (cached && !cached.startsWith('data:')) return false; // already have real image
+    if (_getCocktailDBUrl(p.name)) return false;             // brand map covers it
+    return true;
+  });
+
+  if (unmapped.length === 0) { _geminiBatchDone = true; _geminiBatchPending = false; return; }
+
+  console.log(`[GeminiBatch] Fetching ${unmapped.length} products in one call…`);
+
+  const names = unmapped.map(p => p.name);
+  const prompt =
+    `You are helping find product bottle images. ` +
+    `For each alcohol product name below, find a direct image URL (ending in .jpg .jpeg .png or .webp) showing the actual bottle. ` +
+    `Respond with ONLY a valid JSON object where each key is the exact product name and the value is the image URL. ` +
+    `No markdown, no explanation, no code fences. If you cannot find a URL for a product, omit it.\n\n` +
+    `Products:\n` + names.map(n => `- ${n}`).join("\n");
+
+  try {
+    const resp = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          tools: [{ google_search: {} }]
+        })
+      }
+    );
+    if (!resp.ok) {
+      console.warn("[GeminiBatch] HTTP", resp.status);
+      _geminiBatchDone = true; _geminiBatchPending = false; return;
+    }
+    const data = await resp.json();
+    const text = (data?.candidates?.[0]?.content?.parts || []).map(p => p.text || "").join(" ");
+    // Extract JSON object from response (may be wrapped in ```json ... ```)
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) { console.warn("[GeminiBatch] No JSON in response"); _geminiBatchDone = true; _geminiBatchPending = false; return; }
+
+    let resultMap;
+    try { resultMap = JSON.parse(jsonMatch[0]); }
+    catch(e) { console.warn("[GeminiBatch] JSON parse error", e); _geminiBatchDone = true; _geminiBatchPending = false; return; }
+
+    // Apply results to imageCache and img elements – proxy all URLs
+    let found = 0;
+    for (const p of unmapped) {
+      const url = resultMap[p.name];
+      if (url && /^https?:\/\/.+\.(jpg|jpeg|png|webp)/i.test(url)) {
+        const proxied = "https://images.weserv.nl/?url=" + url.replace(/^https?:\/\//, "") + "&w=400";
+        imageCache[p.id] = proxied;
+        const el = document.getElementById("img_" + p.id);
+        if (el) el.src = proxied;
+        found++;
+      }
+    }
+    try { saveImageCache(); } catch(e) {}
+    console.log(`[GeminiBatch] ✓ Got images for ${found}/${unmapped.length} products`);
+  } catch(e) {
+    console.warn("[GeminiBatch] Error:", e);
+  }
+  _geminiBatchDone = true;
+  _geminiBatchPending = false;
+}
+
+// ── Gemini single-product fallback (only used when batch is done and still no image) ──
+async function _fetchGeminiImage(pid, productName, key, attempt) {
+  attempt = attempt || 1;
+  if (attempt > 2) return null;
+  try {
+    const prompt = `Find a direct image URL (ending in .jpg .jpeg .png or .webp) ` +
+      `for the alcohol bottle: "${productName}". ` +
+      `Return ONLY the raw URL, nothing else, no markdown.`;
+    const resp = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          tools: [{ google_search: {} }]
+        })
+      }
+    );
+    if (resp.status === 429) {
+      const wait = Math.min(attempt * 12000, 60000);
+      await new Promise(r => setTimeout(r, wait));
+      return _fetchGeminiImage(pid, productName, key, attempt + 1);
+    }
+    const data = await resp.json();
+    const text = (data?.candidates?.[0]?.content?.parts || []).map(p => p.text || "").join(" ");
+    const m = text.match(/https?:\/\/[^\s"'<>\]]+\.(?:jpg|jpeg|png|webp)(?:\?[^\s"'<>\]]*)?/i);
+    return m ? m[0] : null;
+  } catch(e) { return null; }
+}
+
+async function _doFetch(pid, productName) {
+  if (!productName || typeof productName !== 'string') return;
+  // Skip cached URLs that are valid (not SVG data URIs which indicate failure)
+  const cached = imageCache[pid];
+  if (cached && !cached.startsWith('data:')) {
+    const el = document.getElementById("img_" + pid);
+    if (el) el.src = cached;
+    return;
+  }
+
+  let imageUrl = null;
+
+  // 1. Brand map – weserv.nl proxy handles hotlink/CORS, no verification needed
+  const brandUrl = _getCocktailDBUrl(productName);
+  if (brandUrl) {
+    imageUrl = brandUrl;
+    console.log("[Brand]", productName, "→", imageUrl);
+  }
+
+  // 2. Gemini – prioritized when key exists
+  //    If batch is still in-flight, wait for it (up to 30s) before falling back to individual call
+  if (!imageUrl) {
+    const key = localStorage.getItem("amartef_gcs_key") || "";
+    if (key) {
+      // Wait for batch to finish if it's running
+      if (_geminiBatchPending) {
+        let waited = 0;
+        while (_geminiBatchPending && waited < 30000) {
+          await new Promise(r => setTimeout(r, 500));
+          waited += 500;
+        }
+        // After batch, re-check cache
+        const afterBatch = imageCache[pid];
+        if (afterBatch && !afterBatch.startsWith('data:')) {
+          const el = document.getElementById("img_" + pid);
+          if (el) el.src = afterBatch;
+          return;
+        }
+      }
+      // Batch is done – if still no image, try individual call (last resort)
+      if (_geminiBatchDone) {
+        const geminiRaw = await _fetchGeminiImage(pid, productName, key);
+        if (geminiRaw) {
+          const geminiProxied = "https://images.weserv.nl/?url=" + geminiRaw.replace(/^https?:\/\//, "") + "&w=400";
+          imageUrl = await _verifyImage(geminiProxied);
+          if (imageUrl) console.log("[Gemini ✓]", productName, "→", imageUrl);
+          else console.warn("[Gemini URL failed]", geminiRaw);
+        }
+      }
+    }
+  }
+
+  // 3. Wikipedia fallback (free, no key) – also proxied
+  if (!imageUrl) {
+    const wikiTitle = _getBrandWikiTitle(productName);
+    if (wikiTitle) {
+      const wikiRaw = await _fetchWikipediaImage(wikiTitle);
+      if (wikiRaw) {
+        const wikiProxied = "https://images.weserv.nl/?url=" + wikiRaw.replace(/^https?:\/\//, "") + "&w=400";
+        imageUrl = await _verifyImage(wikiProxied);
+        if (imageUrl) console.log("[Wiki ✓]", productName, "→", imageUrl);
+      }
+    }
+  }
+
+  if (imageUrl) {
+    imageCache[pid] = imageUrl;
+    try { saveImageCache(); } catch(e) {}
+    const el = document.getElementById("img_" + pid);
+    if (el) el.src = imageUrl;
+  } else {
+    // Clear bad cached entry so it gets retried on next load
+    delete imageCache[pid];
+    console.warn("[img] No image found for", productName);
+  }
+}
+
+async function fetchBottleImage(pid, productName) {
+  const cached = imageCache[pid];
+  if (cached && !cached.startsWith('data:')) {
+    const el = document.getElementById("img_" + pid);
+    if (el) el.src = cached;
+    return;
+  }
+  enqueueBottleImage(pid, productName);
+}
+
+// ── Settings Modal ──────────────────────────────────────────
+function openSettings() {
+  const key = localStorage.getItem("amartef_gcs_key") || "";
+  document.getElementById("settingsApiKey").value = key;
+  document.getElementById("settingsStatus").className = "settings-status";
+  document.getElementById("settingsOverlay").classList.add("open");
+}
+function closeSettings() {
+  document.getElementById("settingsOverlay").classList.remove("open");
+}
+
+// ── Image Picker (manual image assignment per product) ──────
+let _imgPickerPid = null;
+function openImagePicker(pid) {
+  const p = (typeof PRODUCTS !== 'undefined' ? PRODUCTS : []).concat(typeof customProducts !== 'undefined' ? customProducts : []).find(x => x.id === pid);
+  if (!p) return;
+  _imgPickerPid = pid;
+  document.getElementById("imgPickerName").textContent = p.name;
+  document.getElementById("imgPickerUrl").value = "";
+  const st = document.getElementById("imgPickerStatus");
+  st.className = "settings-status"; st.textContent = "";
+  document.getElementById("imgPickerOverlay").classList.add("open");
+}
+function closeImagePicker() {
+  document.getElementById("imgPickerOverlay").classList.remove("open");
+  _imgPickerPid = null;
+}
+function openGoogleImageSearch() {
+  if (_imgPickerPid == null) return;
+  const p = PRODUCTS.concat(customProducts || []).find(x => x.id === _imgPickerPid);
+  if (!p) return;
+  const q = encodeURIComponent(p.name + " bottle");
+  window.open("https://www.google.com/search?tbm=isch&q=" + q, "_blank");
+}
+function saveProductImage() {
+  if (_imgPickerPid == null) return;
+  const raw = document.getElementById("imgPickerUrl").value.trim();
+  const st = document.getElementById("imgPickerStatus");
+  if (!raw) { st.className = "settings-status err"; st.textContent = "⚠️ הדבק כתובת תמונה"; return; }
+  if (!/^https?:\/\//i.test(raw)) { st.className = "settings-status err"; st.textContent = "⚠️ הכתובת חייבת להתחיל ב-http:// או https://"; return; }
+  const proxied = raw.startsWith("https://images.weserv.nl")
+    ? raw
+    : "https://images.weserv.nl/?url=" + raw.replace(/^https?:\/\//, "") + "&w=400";
+  imageCache[_imgPickerPid] = proxied;
+  saveImageCache();
+  const el = document.getElementById("img_" + _imgPickerPid);
+  if (el) el.src = proxied;
+  st.className = "settings-status ok"; st.textContent = "✅ נשמר!";
+  setTimeout(closeImagePicker, 700);
+}
+function clearProductImage() {
+  if (_imgPickerPid == null) return;
+  delete imageCache[_imgPickerPid];
+  saveImageCache();
+  const p = PRODUCTS.concat(customProducts || []).find(x => x.id === _imgPickerPid);
+  const el = document.getElementById("img_" + _imgPickerPid);
+  if (el && p) el.src = _getCocktailDBUrl(p.name) || bottleSVG(p.cat, p.id);
+  const st = document.getElementById("imgPickerStatus");
+  st.className = "settings-status ok"; st.textContent = "🗑 התמונה נוקתה";
+  setTimeout(closeImagePicker, 700);
+}
+function saveSettings() {
+  const key = document.getElementById("settingsApiKey").value.trim();
+  if (!key) { showSettingsStatus("err", "⚠️ נא להזין API Key"); return; }
+  localStorage.setItem("amartef_gcs_key", key);
+  imageCache = {};
+  saveImageCache();
+  showSettingsStatus("ok", "✅ נשמר! סגור ורענן את הדף — התמונות יטענו אוטומטית.");
+}
+async function testSettings() {
+  const key = document.getElementById("settingsApiKey").value.trim();
+  if (!key) { showSettingsStatus("err", "⚠️ הזן קודם את ה-API Key"); return; }
+  showSettingsStatus("ok", "⏳ בודק...");
+  try {
+    const resp = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: "Return ONLY this exact text: OK" }] }]
+        })
+      }
+    );
+    const data = await resp.json();
+    if (data?.candidates?.[0]?.content) {
+      showSettingsStatus("ok", "✅ המפתח תקין! לחץ שמור.");
+    } else if (resp.status === 400) {
+      showSettingsStatus("err", "❌ המפתח שגוי — בדוק שהעתקת נכון");
+    } else if (data?.error) {
+      showSettingsStatus("err", "❌ " + data.error.message);
+    } else {
+      showSettingsStatus("err", "❌ תשובה לא צפויה: " + JSON.stringify(data).slice(0,80));
+    }
+  } catch(e) {
+    showSettingsStatus("err", "❌ שגיאת רשת: " + e.message);
+  }
+}
+function showSettingsStatus(type, msg) {
+  const el = document.getElementById("settingsStatus");
+  el.className = "settings-status " + type;
+  el.textContent = msg;
+}
 
 const ICON = {
-  "וודקה":       "🍸",
-  "ויסקי":       "🥃",
-  "שיבאסים":     "👑",
-  "קוניאק":      "🍷",
-  "ליקר":        "🍫",
-  "ורמוט":       "🌹",
-  "ואן גוך":     "🎨",
-  "ערק":         "🌿",
-  "ג'ין":        "🍃",
-  "רום":         "🍹",
-  "טקילה":       "🌵",
-  "שמפניה":      "🍾",
-  "אפריטיף":     "🍊",
-  "מיקסרים":     "🥤",
-  "משקאות קלים": "🥤",
+  "וודקה":    "🍸",
+  "ויסקי":    "🥃",
+  "שיבאסים":  "🏆",
+  "ואן גוך":  "🎨",
+  "ערק":      "🌿",
+  "ג'ין":     "🍃",
+  "רום":      "🍹",
+  "טקילה":    "🌵",
+  "שמפניה":   "🍾",
 };
 
 // צבעי בקבוק לכל קטגוריה
@@ -560,36 +1112,7 @@ const BOTTLE_COLOR = {
   "שיבאסים": { b:"#e8a87c", m:"#ca6f1e", d:"#784212", s:"#fdebd0" },
   "ליקר":    { b:"#f48fb1", m:"#c2185b", d:"#880e4f", s:"#fce4ec" },
   "קוניאק":  { b:"#d7a86e", m:"#8d6e63", d:"#4e342e", s:"#efebe9" },
-  "ורמוט":       { b:"#ce93d8", m:"#8e24aa", d:"#4a148c", s:"#f3e5f5" },
-  "משקאות קלים": { b:"#fff59d", m:"#fbc02d", d:"#f57f17", s:"#fffde7" },
-};
-
-// ================================================================
-// תמונות בקבוקים אמיתיות (The Whisky Exchange CDN)
-// ================================================================
-const BOTTLE_IMAGES = {
-  // וודקה
-  8:  "https://img.thewhiskyexchange.com/580/vodka_gre1.jpg",   // Grey Goose 700ml
-  9:  "https://img.thewhiskyexchange.com/580/vodka_bel1.jpg",   // Belvedere Pure 700ml
-  // ויסקי – ג'וני ווקר
-  32: "https://img.thewhiskyexchange.com/580/blend_joh1.jpg",   // JW Black 1L
-  33: "https://img.thewhiskyexchange.com/580/blend_joh1.jpg",   // JW Black 700ml
-  34: "https://img.thewhiskyexchange.com/580/blend_joh104.jpg", // JW Gold Reserve 1L
-  35: "https://img.thewhiskyexchange.com/580/blend_joh84.jpg",  // JW Blue Label 750ml
-  // ויסקי – גלנפידיך
-  47: "https://img.thewhiskyexchange.com/580/gfdob.12yo.jpg",   // Glenfiddich 12yr
-  48: "https://img.thewhiskyexchange.com/580/gfdob.15yo.jpg",   // Glenfiddich 15yr
-  49: "https://img.thewhiskyexchange.com/580/gfdob.18yo.jpg",   // Glenfiddich 18yr
-  50: "https://img.thewhiskyexchange.com/580/gfdob.21yo.jpg",   // Glenfiddich 21yr
-  // ג'ין
-  110:"https://img.thewhiskyexchange.com/580/gin_hen1.jpg",     // Hendrick's Gin 700ml
-  111:"https://img.thewhiskyexchange.com/580/gin_tan44.jpg",    // Tanqueray London Dry 1L
-  112:"https://img.thewhiskyexchange.com/580/gin_bom2.jpg",     // Bombay Sapphire 1L
-  113:"https://img.thewhiskyexchange.com/580/gin_bee1.jpg",     // Beefeater London Dry 1L
-  44: "https://img.thewhiskyexchange.com/580/irish_jam1.jpg",   // Jameson 1L
-  45: "https://img.thewhiskyexchange.com/580/irish_jam1.jpg",   // Jameson 700ml
-  46: "https://img.thewhiskyexchange.com/580/irish_jam49.jpg",  // Jameson Caskmates Stout
-  59: "https://img.thewhiskyexchange.com/580/lrgob.10yov1.jpg", // Laphroaig 10yr
+  "ורמוט":   { b:"#ce93d8", m:"#8e24aa", d:"#4a148c", s:"#f3e5f5" },
 };
 
 // ================================================================
@@ -604,36 +1127,22 @@ const PRODUCTS = [
   { id:5,  cat:"וודקה",  name:"אבסולוט פטל – 700 מ\"ל",                     buy:45,  sell:70  },
   { id:6,  cat:"וודקה",  name:"סמירנוף רד לייבל – 1 ליטר",                 buy:38,  sell:59  },
   { id:7,  cat:"וודקה",  name:"סמירנוף רד לייבל – 700 מ\"ל",               buy:30,  sell:47  },
-  { id:8,  cat:"וודקה",  name:"גריי גוס – 700 מ\"ל",                        buy:95,  sell:149 },
+  { id:8,  cat:"וודקה",  name:"גריי גוס – 700 מ\"ל",                        buy:95,  sell:148 },
   { id:9,  cat:"וודקה",  name:"בלבדר פיור – 700 מ\"ל",                      buy:100, sell:155 },
   { id:10, cat:"וודקה",  name:"קטל וואן – 1 ליטר",                          buy:75,  sell:115 },
   { id:11, cat:"וודקה",  name:"סירוק אוריג'ינל – 700 מ\"ל",                 buy:95,  sell:145 },
   { id:12, cat:"וודקה",  name:"קריסטל הד – 700 מ\"ל",                       buy:120, sell:180 },
   { id:13, cat:"וודקה",  name:"פינלנדיה קלאסיק – 1 ליטר",                  buy:45,  sell:70  },
   { id:14, cat:"וודקה",  name:"סטוליצ'נאיה פרמיום – 1 ליטר",               buy:48,  sell:74  },
-  { id:15, cat:"וודקה",  name:"רוסיאן סטנדרד – 1 ליטר",                    buy:42,  sell:87  },
+  { id:15, cat:"וודקה",  name:"רוסיאן סטנדרד – 1 ליטר",                    buy:42,  sell:65  },
   { id:16, cat:"וודקה",  name:"אריסטוף אוריג'ינל – 1 ליטר",                buy:38,  sell:58  },
-  { id:17, cat:"וודקה",  name:"בלוגה נובל – 1 ליטר",                          buy:116, sell:160, buyNet:116, sellMin:160, sellMax:160 },
-  { id:18, cat:"וודקה",  name:"בלוגה נובל – 700 מל",                        buy:75,  sell:118 },
-  // ── תוספות וודקה (ביקושים בארץ) ────────────────────────────────────
-  { id:500, cat:"וודקה", name:"טיטוס הנדמייד – 1 ליטר",                    buy:75,  sell:115 },
-  { id:501, cat:"וודקה", name:"טיטוס הנדמייד – 700 מ\"ל",                  buy:60,  sell:95  },
-  { id:502, cat:"וודקה", name:"סקיי – 1 ליטר",                              buy:55,  sell:85  },
-  { id:503, cat:"וודקה", name:"סירוק רד ברי – 700 מ\"ל",                    buy:135, sell:200 },
-  { id:504, cat:"וודקה", name:"סירוק אננס – 700 מ\"ל",                      buy:135, sell:200 },
-  { id:505, cat:"וודקה", name:"סירוק ווטרמלון – 700 מ\"ל",                  buy:135, sell:200 },
-  { id:506, cat:"וודקה", name:"בלוגה גולד ליין – 700 מ\"ל",                buy:280, sell:420 },
-  { id:507, cat:"וודקה", name:"רוסיאן סטנדרד פלטינום – 700 מ\"ל",         buy:65,  sell:100 },
-  { id:508, cat:"וודקה", name:"וויבורובה – 1 ליטר",                          buy:48,  sell:75  },
-  { id:509, cat:"וודקה", name:"חורטיצה – 1 ליטר",                            buy:50,  sell:78  },
-  { id:510, cat:"וודקה", name:"סמירנוף וניל – 700 מ\"ל",                    buy:48,  sell:75  },
-  { id:511, cat:"וודקה", name:"סמירנוף תפוח ירוק – 700 מ\"ל",              buy:48,  sell:75  },
-  { id:512, cat:"וודקה", name:"סמירנוף סיטרוס – 700 מ\"ל",                  buy:48,  sell:75  },
+  { id:17, cat:"וודקה",  name:"בלוגה נובל – 1 ליטר",                          buy:95,  sell:148 },
+  { id:18, cat:"וודקה",  name:"בלוגה נובל – 700 מ\"ל",                        buy:75,  sell:118 },
 
   // ── ויסקי ──────────────────────────────────────
   { id:30, cat:"ויסקי",  name:"ג'וני ווקר רד לייבל – 1 ליטר",              buy:65,  sell:99  },
   { id:31, cat:"ויסקי",  name:"ג'וני ווקר רד לייבל – 700 מ\"ל",            buy:52,  sell:79  },
-  { id:32, cat:"ויסקי",  name:"ג'וני ווקר בלאק לייבל – 1 ליטר",            buy:105, sell:152, buyNet:105, sellMin:152, sellMax:152 },
+  { id:32, cat:"ויסקי",  name:"ג'וני ווקר בלאק לייבל – 1 ליטר",            buy:95,  sell:142 },
   { id:33, cat:"ויסקי",  name:"ג'וני ווקר בלאק לייבל – 700 מ\"ל",          buy:78,  sell:118 },
   { id:34, cat:"ויסקי",  name:"ג'וני ווקר גולד ריזרב – 1 ליטר",            buy:160, sell:235 },
   { id:35, cat:"ויסקי",  name:"ג'וני ווקר בלו לייבל – 750 מ\"ל",           buy:320, sell:465 },
@@ -642,7 +1151,8 @@ const PRODUCTS = [
   { id:38, cat:"ויסקי",  name:"ג'ק דניאלס ג'נטלמן – 1 ליטר",              buy:100, sell:148 },
   { id:39, cat:"ויסקי",  name:"ג'ק דניאלס סינגל ברל – 700 מ\"ל",           buy:130, sell:192 },
   { id:40, cat:"ויסקי",  name:"ג'ק דניאלס דבש – 700 מ\"ל",                 buy:68,  sell:102 },
-  { id:41,  cat:"שיבאסים", name:"צ'יבס ריגל 12 שנה – 1 ליטר",               buy:110, sell:162 },
+  // ── שיבאסים (צ'יבס ריגל) ────────────────────────
+  { id:41, cat:"שיבאסים",  name:"צ'יבס ריגל 12 שנה – 1 ליטר",               buy:110, sell:162 },
   { id:300, cat:"שיבאסים", name:"צ'יבס ריגל 12 שנה – 700 מ\"ל",              buy:88,  sell:132 },
   { id:42,  cat:"שיבאסים", name:"צ'יבס ריגל 15 שנה – 700 מ\"ל",              buy:140, sell:208 },
   { id:301, cat:"שיבאסים", name:"צ'יבס ריגל 18 שנה – 700 מ\"ל",              buy:195, sell:285 },
@@ -659,7 +1169,7 @@ const PRODUCTS = [
   { id:48, cat:"ויסקי",  name:"גלנפידיך 15 שנה – 700 מ\"ל",                buy:150, sell:220 },
   { id:49, cat:"ויסקי",  name:"גלנפידיך 18 שנה – 700 מ\"ל",                buy:210, sell:305 },
   { id:50, cat:"ויסקי",  name:"גלנפידיך 21 שנה – 700 מ\"ל",                buy:300, sell:435 },
-  { id:51, cat:"ויסקי",  name:"גלנליבט 12 שנה – 700 מ\"ל",                 buy:105, sell:200 },
+  { id:51, cat:"ויסקי",  name:"גלנליבט 12 שנה – 700 מ\"ל",                 buy:105, sell:155 },
   { id:52, cat:"ויסקי",  name:"גלנליבט 15 שנה – 700 מ\"ל",                 buy:140, sell:205 },
   { id:53, cat:"ויסקי",  name:"מאנקי שולדר – 700 מ\"ל",                    buy:100, sell:150 },
   { id:54, cat:"ויסקי",  name:"בלנטיינס פיינסט – 1 ליטר",                  buy:62,  sell:95  },
@@ -672,16 +1182,17 @@ const PRODUCTS = [
   { id:61, cat:"ויסקי",  name:"ג'ים ביים ווייט לייבל – 1 ליטר",           buy:55,  sell:84  },
   { id:62, cat:"ויסקי",  name:"ווילד טרקי 101 – 1 ליטר",                   buy:78,  sell:118 },
   { id:63, cat:"ויסקי",  name:"טולמור דיו – 1 ליטר",                        buy:72,  sell:109 },
+  { id:64, cat:"ויסקי",  name:"רויאל סאלוט 21 שנה – 700 מ\"ל",               buy:400, sell:580 },
 
   // ── ואן גוך ────────────────────────────────────
   { id:70, cat:"ואן גוך", name:"ואן גוך וודקה מקורית – 750 מ\"ל",          buy:65,  sell:98  },
   { id:71, cat:"ואן גוך", name:"ואן גוך אספרסו כפול – 750 מ\"ל",           buy:70,  sell:105 },
   { id:72, cat:"ואן גוך", name:"ואן גוך קרמל – 750 מ\"ל",                   buy:70,  sell:105 },
   { id:73, cat:"ואן גוך", name:"ואן גוך שוקולד הולנדי – 750 מ\"ל",          buy:70,  sell:105 },
-  { id:74, cat:"ואן גוך", name:"ואן גוך אננס – 750 מ\"ל",                   buy:68,  sell:142 },
+  { id:74, cat:"ואן גוך", name:"ואן גוך אננס – 750 מ\"ל",                   buy:68,  sell:100 },
   { id:75, cat:"ואן גוך", name:"ואן גוך קוקוס – 750 מ\"ל",                  buy:68,  sell:100 },
   { id:76, cat:"ואן גוך", name:"ואן גוך מנגו – 750 מ\"ל",                   buy:68,  sell:100 },
-  { id:77, cat:"ואן גוך", name:"ואן גוך בלו אסאי – 750 מ\"ל",              buy:72,  sell:130 },
+  { id:77, cat:"ואן גוך", name:"ואן גוך בלו אסאי – 750 מ\"ל",              buy:72,  sell:108 },
   { id:78, cat:"ואן גוך", name:"ואן גוך פטל – 750 מ\"ל",                    buy:68,  sell:100 },
   { id:79, cat:"ואן גוך", name:"ואן גוך וניל – 750 מ\"ל",                   buy:68,  sell:100 },
   { id:80, cat:"ואן גוך", name:"ואן גוך אפרסק – 750 מ\"ל",                  buy:68,  sell:100 },
@@ -703,7 +1214,7 @@ const PRODUCTS = [
   // ── ג'ין ───────────────────────────────────────
   { id:110,cat:"ג'ין",   name:"הנדריקס ג'ין – 700 מ\"ל",                    buy:95,  sell:142 },
   { id:111,cat:"ג'ין",   name:"טנקראי לונדון דריי – 1 ליטר",                buy:72,  sell:108 },
-  { id:112,cat:"ג'ין",   name:"בומביי ספייר – 1 ליטר",                      buy:91.5, sell:140, buyNet:91.5, sellMin:140, sellMax:140 },
+  { id:112,cat:"ג'ין",   name:"בומביי ספייר – 1 ליטר",                      buy:72,  sell:108 },
   { id:113,cat:"ג'ין",   name:"ביפיטר לונדון דריי – 1 ליטר",               buy:60,  sell:90  },
   { id:114,cat:"ג'ין",   name:"גורדונס לונדון דריי – 1 ליטר",              buy:45,  sell:70  },
   { id:115,cat:"ג'ין",   name:"בוטניסט איילי ג'ין – 700 מ\"ל",             buy:110, sell:162 },
@@ -720,36 +1231,28 @@ const PRODUCTS = [
   { id:126,cat:"רום",    name:"מליבו קוקוס – 1 ליטר",                       buy:42,  sell:65  },
   { id:127,cat:"רום",    name:"אפלטון אסטייט – 700 מ\"ל",                   buy:75,  sell:112 },
 
-  // ── רום נוסף ──
-  { id:317, cat:"רום",    name:"בקארדי סופריור לבן – 700 מ\"ל",          buy:34,  sell:52  },
-  { id:318, cat:"רום",    name:"קפטן מורגן ספייסד – 700 מ\"ל",           buy:48,  sell:72  },
-  { id:319, cat:"רום",    name:"פלנטיישן 3 סטארס – 700 מ\"ל",            buy:65,  sell:96  },
-  { id:320, cat:"רום",    name:"מאונט גיי אקליפס – 700 מ\"ל",            buy:72,  sell:108 },
-  // ── ג'ין נוסף ──
-  { id:308, cat:"ג'ין",   name:"טנקראי נמבר 10 – 700 מ\"ל",             buy:98,  sell:145 },
-  { id:309, cat:"ג'ין",   name:"טנקראי סביליה – 700 מ\"ל",              buy:88,  sell:130 },
-  { id:310, cat:"ג'ין",   name:"ביפיטר פינק – 700 מ\"ל",                buy:72,  sell:108 },
-  { id:311, cat:"ג'ין",   name:"גורדונס פינק – 700 מ\"ל",               buy:50,  sell:76  },
-  { id:312, cat:"ג'ין",   name:"מרטין מילרס ג'ין – 700 מ\"ל",           buy:82,  sell:122 },
-  // ── ערק נוסף ──
-  { id:313, cat:"ערק",    name:"ערק 777 אליט – 500 מ\"ל",               buy:16,  sell:26  },
-  { id:314, cat:"ערק",    name:"ערק נחלה – 750 מ\"ל",                   buy:35,  sell:55  },
-  { id:315, cat:"ערק",    name:"ערק ג'מאל – 750 מ\"ל",                  buy:32,  sell:50  },
-  { id:316, cat:"ערק",    name:"ערק טייבה – 1 ליטר",                     buy:42,  sell:65  },
-  // ── ויסקי נוסף ──
-  { id:321, cat:"ויסקי",  name:"בלנטיינס 12 שנה – 700 מ\"ל",            buy:88,  sell:130 },
-  { id:322, cat:"ויסקי",  name:"בלנטיינס 17 שנה – 700 מ\"ל",            buy:175, sell:255 },
-  { id:323, cat:"ויסקי",  name:"ג'יימסון בלאק ברל – 700 מ\"ל",          buy:88,  sell:130 },
-  { id:324, cat:"ויסקי",  name:"מקאלן 12 שנה שרי אוק – 700 מ\"ל",       buy:260, sell:380 },
-  { id:325, cat:"ויסקי",  name:"מקאלן 15 שנה שרי אוק – 700 מ\"ל",       buy:420, sell:610 },
   // ── טקילה ──────────────────────────────────────
   { id:130,cat:"טקילה",  name:"חוסה קוארבו גולד – 1 ליטר",                 buy:55,  sell:84  },
   { id:131,cat:"טקילה",  name:"חוסה קוארבו סילבר – 1 ליטר",               buy:55,  sell:84  },
   { id:132,cat:"טקילה",  name:"אולמקה גולד – 1 ליטר",                      buy:52,  sell:80  },
-  { id:133,cat:"טקילה",  name:"פטרון סילבר – 700 מ\"ל",                     buy:115, sell:229 },
+  { id:133,cat:"טקילה",  name:"פטרון סילבר – 700 מ\"ל",                     buy:115, sell:172 },
   { id:134,cat:"טקילה",  name:"1800 סילבר טקילה – 700 מ\"ל",               buy:95,  sell:142 },
   { id:135,cat:"טקילה",  name:"אספולון בלאנקו – 700 מ\"ל",                 buy:75,  sell:112 },
   { id:136,cat:"טקילה",  name:"דון חוליו בלאנקו – 700 מ\"ל",              buy:145, sell:215 },
+  { id:137,cat:"טקילה",  name:"דון חוליו רפוסדו – 700 מ\"ל",              buy:158, sell:235 },
+  { id:138,cat:"טקילה",  name:"דון חוליו אניחו – 700 מ\"ל",               buy:185, sell:275 },
+  { id:139,cat:"טקילה",  name:"דון חוליו 1942 – 750 מ\"ל",                buy:550, sell:800 },
+  { id:145,cat:"טקילה",  name:"דון חוליו פרימה – 750 מ\"ל",               buy:420, sell:620 },
+  { id:146,cat:"טקילה",  name:"דון חוליו רל – 750 מ\"ל",                  buy:750, sell:1100 },
+  { id:147,cat:"טקילה",  name:"דון חוליו 70 – 750 מ\"ל",                  buy:480, sell:700 },
+  { id:148,cat:"טקילה",  name:"קלאסה אזול בלאנקו – 750 מ\"ל",             buy:820, sell:1200 },
+  { id:149,cat:"טקילה",  name:"קלאסה אזול רפוסדו – 750 מ\"ל",             buy:880, sell:1280 },
+  { id:162,cat:"טקילה",  name:"קלאסה אזול אניחו – 750 מ\"ל",              buy:980, sell:1450 },
+  { id:163,cat:"טקילה",  name:"קלאסה אזול פלטה – 750 מ\"ל",               buy:1800, sell:2600 },
+  { id:164,cat:"טקילה",  name:"קלאסה אזול מסטרו – 750 מ\"ל",              buy:2200, sell:3200 },
+  { id:165,cat:"טקילה",  name:"פטרון רפוסדו – 700 מ\"ל",                   buy:130, sell:192 },
+  { id:166,cat:"טקילה",  name:"פטרון אניחו – 700 מ\"ל",                    buy:155, sell:228 },
+  { id:167,cat:"טקילה",  name:"פטרון XO קפה ליקר – 750 מ\"ל",             buy:145, sell:215 },
 
   // ── שמפניה ─────────────────────────────────────
   { id:140,cat:"שמפניה", name:"מואה שאנדון ברוט אימפריאל – 750 מ\"ל",      buy:120, sell:178 },
@@ -757,110 +1260,13 @@ const PRODUCTS = [
   { id:142,cat:"שמפניה", name:"מום קורדון רוז' ברוט – 750 מ\"ל",           buy:88,  sell:130 },
   { id:143,cat:"שמפניה", name:"מרטיני פרוסקו – 750 מ\"ל",                  buy:35,  sell:55  },
   { id:144,cat:"שמפניה", name:"פרשינט קאבה קורדון נגרו – 750 מ\"ל",        buy:28,  sell:44  },
-
-  // ── חדשים ──────────────────────────────────────
-  { id:150,cat:"וודקה",    name:"גריי גוס – 1 ליטר",                         buy:106, sell:140.5, buyNet:106, sellMin:140.5, sellMax:145 },
-  { id:151,cat:"ויסקי",    name:"טולמור דיו – 700 מ\"ל",                    buy:58,  sell:88  },
-  { id:152,cat:"טקילה",    name:"חוסה קוארבו גולד – 700 מ\"ל",             buy:45,  sell:68  },
-  { id:153,cat:"טקילה",    name:"חוסה קוארבו סילבר – 700 מ\"ל",           buy:45,  sell:68  },
-
-  // ── אפריטיף ────────────────────────────────────
-  { id:154,cat:"אפריטיף",  name:"אפרול – 1 ליטר",                            buy:52,  sell:78  },
-  { id:155,cat:"אפריטיף",  name:"קמפרי – 1 ליטר",                            buy:62,  sell:92  },
-
-  // ── מבעבעים ────────────────────────────────────
-  { id:156,cat:"שמפניה",   name:"קאווה – 750 מ\"ל",                         buy:22,  sell:35  },
-
-  // ── מיקסרים ────────────────────────────────────
-  { id:157,cat:"מיקסרים",  name:"משקה אנרגיה XL / Blue – 250 מ\"ל",        buy:7,   sell:11  },
-  { id:307,cat:"מיקסרים",  name:"רד בול – 250 מ\"ל",                        buy:9,   sell:14  },
-  { id:158,cat:"מיקסרים",  name:"מיץ חמוציות – 1.5 ליטר",                   buy:8.3, sell:11.5, buyNet:8.3, sellMin:11.5, sellMax:13 },
-  { id:159,cat:"מיקסרים",  name:"לימונדה – 1.5 ליטר",                        buy:7,   sell:11  },
-  { id:160,cat:"מיקסרים",  name:"מי טוניק – 1.5 ליטר",                       buy:8.3, sell:11.5, buyNet:8.3, sellMin:11.5, sellMax:12 },
-  { id:161,cat:"מיקסרים",  name:"שוופס ראשן – 1.5 ליטר",                    buy:8.3, sell:11.5, buyNet:8.3, sellMin:11.5, sellMax:12 },
-
-  // ── ליקר ───────────────────────────────────────────────────────────
-  { id:200,cat:"ליקר", name:"בייליס אוריגינל – 1 ליטר",         buy:55, sell:85  },
-  { id:201,cat:"ליקר", name:"בייליס אוריגינל – 700 מ\"ל",       buy:45, sell:70  },
-  { id:202,cat:"ליקר", name:"קלוה קפה – 700 מ\"ל",              buy:52, sell:80  },
-  { id:203,cat:"ליקר", name:"אמארטו דיסארונו – 700 מ\"ל",       buy:58, sell:88  },
-  { id:204,cat:"ליקר", name:"יגרמייסטר – 1 ליטר",               buy:65, sell:98  },
-  { id:205,cat:"ליקר", name:"מידורי מלון – 700 מ\"ל",           buy:58, sell:88  },
-  { id:206,cat:"ליקר", name:"פרנה בראנקה – 1 ליטר",             buy:65, sell:98  },
-  { id:207,cat:"ליקר", name:"לימונצ'לו – 700 מ\"ל",            buy:45, sell:70  },
-  { id:208,cat:"ליקר", name:"טריפל סק – 1 ליטר",                buy:35, sell:55  },
-  { id:209,cat:"ליקר", name:"גליאנו – 700 מ\"ל",               buy:65, sell:98  },
-  { id:210,cat:"ליקר", name:"שרנטס קווינטרו – 700 מ\"ל",       buy:68, sell:102 },
-  { id:211,cat:"ליקר", name:"סמבוקה מורינו – 700 מ\"ל",        buy:52, sell:80  },
-  { id:212,cat:"ליקר", name:"פאסואה פסיפלורה – 700 מ\"ל",      buy:55, sell:85  },
-  { id:213,cat:"ליקר", name:"שנאפס פיך – 700 מ\"ל",            buy:42, sell:65  },
-
-  // ── קוניאק ──────────────────────────────────────────────────────────
-  { id:220,cat:"קוניאק", name:"הנסי VS – 700 מ\"ל",             buy:110, sell:165 },
-  { id:221,cat:"קוניאק", name:"הנסי VSOP – 700 מ\"ל",           buy:150, sell:225 },
-  { id:222,cat:"קוניאק", name:"הנסי XO – 700 מ\"ל",             buy:350, sell:520 },
-  { id:223,cat:"קוניאק", name:"רמי מרטן VSOP – 700 מ\"ל",      buy:160, sell:238 },
-  { id:224,cat:"קוניאק", name:"מרטל VS – 700 מ\"ל",             buy:105, sell:158 },
-  { id:225,cat:"קוניאק", name:"מרטל VSOP – 700 מ\"ל",           buy:145, sell:215 },
-  { id:226,cat:"קוניאק", name:"קורבואזייה VS – 700 מ\"ל",       buy:115, sell:172 },
-  { id:227,cat:"קוניאק", name:"ארמניאק – 700 מ\"ל",             buy:95,  sell:142 },
-
-  // ── ורמוט ───────────────────────────────────────────────────────────
-  { id:230,cat:"ורמוט", name:"מרטיני רוסו – 1 ליטר",            buy:28, sell:44  },
-  { id:231,cat:"ורמוט", name:"מרטיני ביאנקו – 1 ליטר",          buy:28, sell:44  },
-  { id:232,cat:"ורמוט", name:"מרטיני אקסטרה דריי – 1 ליטר",    buy:28, sell:44  },
-  { id:233,cat:"ורמוט", name:"נולי פראט – 750 מ\"ל",            buy:45, sell:70  },
-  { id:234,cat:"ורמוט", name:"צ'ינזאנו רוסו – 1 ליטר",         buy:25, sell:40  },
-  // ── פרמיום (חדש) ───────────────────────────────────────────────
-  // הערה חשובה: ה-ID-ים הוחלפו ל-400+ למניעת התנגשות עם 220-224 (קוניאק/הנסי)
-  { id:400, cat:"ויסקי",  name:"רויאל סאלוט 21 שנה – 700 מ\"ל",          buy:292,  sell:388,  buyNet:292,  sellMin:388,  sellMax:400  },
-  { id:401, cat:"טקילה",  name:"דון חוליו 1942 – 700 מ\"ל",              buy:373,  sell:533.5, buyNet:373, sellMin:533.5, sellMax:550  },
-  { id:402, cat:"טקילה",  name:"קלאסה אזול אנחו – 700 מ\"ל",            buy:559,  sell:800, buyNet:559, sellMin:800, sellMax:880  },
-  { id:403, cat:"ערק",    name:"ערק איילה – 750 מ\"ל",                   buy:52.5, sell:63,   buyNet:52.5, sellMin:63,   sellMax:65   },
-  { id:404, cat:"מיקסרים",name:"ארגז XL / Blue – 24 יחידות",              buy:52,   sell:82.5, buyNet:52,   sellMin:82.5, sellMax:85   },
-
-  // ── משקאות קלים (ביקושים פופולריים בישראל) ────────────────────
-  { id:600, cat:"משקאות קלים", name:"קוקה קולה – 1.5 ליטר",            buy:7,   sell:12  },
-  { id:601, cat:"משקאות קלים", name:"קוקה קולה זירו – 1.5 ליטר",        buy:7,   sell:12  },
-  { id:602, cat:"משקאות קלים", name:"קוקה קולה דיאט – 1.5 ליטר",        buy:7,   sell:12  },
-  { id:603, cat:"משקאות קלים", name:"קוקה קולה וניל – 500 מ\"ל",       buy:5,   sell:9   },
-  { id:604, cat:"משקאות קלים", name:"פפסי מקס – 1.5 ליטר",              buy:6.5, sell:11  },
-  { id:605, cat:"משקאות קלים", name:"ספרייט – 1.5 ליטר",                buy:6.5, sell:11  },
-  { id:606, cat:"משקאות קלים", name:"פאנטה תפוז – 1.5 ליטר",            buy:6.5, sell:11  },
-  { id:607, cat:"משקאות קלים", name:"שוופס מי טוניק – 1 ליטר",          buy:8,   sell:13  },
-  { id:608, cat:"משקאות קלים", name:"שוופס בייטר לימון – 1.5 ליטר",     buy:7,   sell:12  },
-  { id:609, cat:"משקאות קלים", name:"שוופס סודה – 1 ליטר",              buy:6,   sell:10  },
-  { id:610, cat:"משקאות קלים", name:"RC קולה – 1.5 ליטר",               buy:5.5, sell:9   },
-  { id:611, cat:"משקאות קלים", name:"נביעות מים – 1.5 ליטר (6 בק׳)",     buy:18,  sell:27  },
-  { id:612, cat:"משקאות קלים", name:"מי עדן – 1.5 ליטר (6 בק׳)",         buy:22,  sell:32  },
-  { id:613, cat:"משקאות קלים", name:"נביעות מינרליים – 500 מ\"ל (24)",  buy:24,  sell:36  },
-  { id:614, cat:"משקאות קלים", name:"פריגת תפוז – 1.5 ליטר",            buy:7,   sell:12  },
-  { id:615, cat:"משקאות קלים", name:"פריגת אננס – 1.5 ליטר",            buy:7,   sell:12  },
-  { id:616, cat:"משקאות קלים", name:"פריגת ענבים – 1.5 ליטר",           buy:7,   sell:12  },
-  { id:617, cat:"משקאות קלים", name:"פריגת לימונדה – 1.5 ליטר",         buy:7,   sell:12  },
-  { id:618, cat:"משקאות קלים", name:"ספרינג לימון – 1.5 ליטר",          buy:7,   sell:12  },
-  { id:619, cat:"משקאות קלים", name:"טרופיקנה תפוז – 1 ליטר",           buy:14,  sell:22  },
-  { id:620, cat:"משקאות קלים", name:"רד בול – 250 מ\"ל",               buy:7,   sell:12  },
-  { id:621, cat:"משקאות קלים", name:"רד בול שוגר פרי – 250 מ\"ל",       buy:7,   sell:12  },
-  { id:622, cat:"משקאות קלים", name:"מונסטר אנרגיה – 500 מ\"ל",        buy:9,   sell:14  },
-  { id:623, cat:"משקאות קלים", name:"XL אנרגיה – 250 מ\"ל",            buy:5,   sell:9   },
-  { id:624, cat:"משקאות קלים", name:"אריזונה תה אפרסק – 500 מ\"ל",     buy:6,   sell:10  },
-  { id:625, cat:"משקאות קלים", name:"שוופס לימון תה קר – 1.5 ליטר",     buy:7,   sell:12  },
-  { id:626, cat:"משקאות קלים", name:"קולה זירו – 330 מ\"ל פחית",        buy:3.5, sell:6   },
-  { id:627, cat:"משקאות קלים", name:"קוקה קולה – 330 מ\"ל פחית",       buy:3.5, sell:6   },
-  { id:628, cat:"משקאות קלים", name:"מי עדן ספארקלינג – 500 מ\"ל",     buy:5,   sell:9   },
-  { id:629, cat:"משקאות קלים", name:"קינלי שוופס לימון – 1.5 ליטר",     buy:7,   sell:12  },
-  { id:170, cat:"ויסקי",  name:"גלנליבט פאונדרס ריזרב – 700 מ"ל",  buy:108,  sell:160 },
-  { id:171, cat:"טקילה",  name:"דון חוליו – 700 מ"ל",  buy:340,  sell:500 },
-  { id:172, cat:"ואן גוך",  name:"ואן גוך מלון – 1 ליטר",  buy:96,  sell:142 },
-  { id:173, cat:"ויסקי",  name:"ג'וני ווקר גרין לייבל 15 שנה – 700 מ"ל",  buy:185,  sell:270 },
-
 ];
 
 // ================================================================
 // מצב
 // ================================================================
-let cart      = [];
+let cart          = [];
+let customProducts = [];     // מוצרים שנוספו ידנית
 let stockMap  = {};          // pid → true/false (true = במלאי)
 let buyMap    = {};          // pid → מחיר קנייה מותאם
 let sellMap   = {};          // pid → מחיר מכירה מותאם
@@ -868,6 +1274,8 @@ let activeCat = "הכל";
 let mode      = "quote";    // "quote" | "order"
 
 PRODUCTS.forEach(p => { stockMap[p.id] = true; buyMap[p.id] = p.buy; sellMap[p.id] = p.sell; });
+
+function getAllProducts() { return PRODUCTS.concat(customProducts); }
 
 // ================================================================
 // שמירת מחירי קנייה ב-localStorage
@@ -931,383 +1339,133 @@ function bottleSVG(cat, id) {
 }
 
 // ================================================================
+// מוצרים מותאמים אישית
+// ================================================================
+function loadCustomProducts() {
+  try {
+    const saved = localStorage.getItem("amartef_custom_products");
+    if (saved) {
+      customProducts = JSON.parse(saved);
+      customProducts.forEach(p => {
+        if (stockMap[p.id] === undefined) stockMap[p.id] = true;
+        if (buyMap[p.id]   === undefined) buyMap[p.id]   = p.buy;
+        if (sellMap[p.id]  === undefined) sellMap[p.id]  = p.sell;
+        if (!ICON[p.cat])        ICON[p.cat]        = "🍷";
+        if (!BOTTLE_COLOR[p.cat]) BOTTLE_COLOR[p.cat] = { b:"#bdc3c7", m:"#7f8c8d", d:"#2c3e50", s:"#d5d8dc" };
+      });
+    }
+  } catch(e) {}
+}
+function saveCustomProducts() {
+  try { localStorage.setItem("amartef_custom_products", JSON.stringify(customProducts)); } catch(e) {}
+}
+
+function openAddProduct() {
+  const catSel = document.getElementById("npCat");
+  catSel.innerHTML = "";
+  const allCats = [...new Set([...Object.keys(ICON), ...customProducts.map(p => p.cat)])];
+  allCats.forEach(c => {
+    const opt = document.createElement("option");
+    opt.value = c;
+    opt.textContent = (ICON[c] || "🍷") + " " + c;
+    catSel.appendChild(opt);
+  });
+  const newOpt = document.createElement("option");
+  newOpt.value = "__new__";
+  newOpt.textContent = "➕ קטגוריה חדשה...";
+  catSel.appendChild(newOpt);
+
+  document.getElementById("npNewCatRow").style.display = "none";
+  document.getElementById("npName").value   = "";
+  document.getElementById("npBuy").value    = "";
+  document.getElementById("npSell").value   = "";
+  document.getElementById("npImgUrl").value = "";
+  document.getElementById("npStatus").className = "settings-status";
+  document.getElementById("addProductOverlay").classList.add("open");
+}
+function closeAddProduct() {
+  document.getElementById("addProductOverlay").classList.remove("open");
+}
+function onNpCatChange() {
+  const val = document.getElementById("npCat").value;
+  document.getElementById("npNewCatRow").style.display = val === "__new__" ? "block" : "none";
+}
+function saveNewProduct() {
+  const name    = document.getElementById("npName").value.trim();
+  const catVal  = document.getElementById("npCat").value;
+  const newName = document.getElementById("npNewCatName").value.trim();
+  const newIcon = document.getElementById("npNewCatIcon").value.trim() || "🍷";
+  const buy     = parseFloat(document.getElementById("npBuy").value)  || 0;
+  const sell    = parseFloat(document.getElementById("npSell").value) || 0;
+  const imgUrl  = document.getElementById("npImgUrl").value.trim();
+
+  if (!name)          { showNpStatus("err", "⚠️ נא להזין שם בקבוק"); return; }
+  if (!buy || !sell)  { showNpStatus("err", "⚠️ נא להזין מחיר קנייה ומכירה"); return; }
+
+  let cat;
+  if (catVal === "__new__") {
+    if (!newName) { showNpStatus("err", "⚠️ נא להזין שם קטגוריה חדשה"); return; }
+    cat = newName;
+    if (!ICON[cat])         ICON[cat]         = newIcon;
+    if (!BOTTLE_COLOR[cat]) BOTTLE_COLOR[cat] = { b:"#bdc3c7", m:"#7f8c8d", d:"#2c3e50", s:"#d5d8dc" };
+  } else {
+    cat = catVal;
+  }
+
+  const id = Date.now();
+  const product = { id, cat, name, buy, sell, custom: true };
+  customProducts.push(product);
+  stockMap[id] = true;
+  buyMap[id]   = buy;
+  sellMap[id]  = sell;
+
+  if (imgUrl) {
+    const proxied = imgUrl.startsWith("https://images.weserv.nl")
+      ? imgUrl
+      : "https://images.weserv.nl/?url=" + imgUrl.replace(/^https?:\/\//, "") + "&w=400";
+    imageCache[id] = proxied;
+    saveImageCache();
+  }
+
+  saveCustomProducts();
+  saveBuyPrices();
+  saveSellPrices();
+  closeAddProduct();
+  buildTabs();
+  renderProducts();
+  showNpStatus("ok", "✅ הבקבוק נוסף בהצלחה!");
+}
+function showNpStatus(type, msg) {
+  const el = document.getElementById("npStatus");
+  el.className = "settings-status " + type;
+  el.textContent = msg;
+}
+function deleteCustomProduct(id) {
+  if (!confirm("למחוק את הבקבוק מהרשימה?")) return;
+  customProducts = customProducts.filter(p => p.id !== id);
+  saveCustomProducts();
+  delete stockMap[id];
+  delete buyMap[id];
+  delete sellMap[id];
+  if (imageCache[id]) { delete imageCache[id]; saveImageCache(); }
+  cart = cart.filter(i => i.product.id !== id);
+  buildTabs();
+  renderProducts();
+  renderQuote();
+}
+
+// ================================================================
 // אתחול
 // ================================================================
-
-// ─── IMAGE CACHE ────────────────────────────────────────────────────
-let imageCache = {};
-let _imgQueue = [], _imgRunning = 0;
-const IMG_CONCURRENCY = 3;
-const IMG_DELAY_MS = 80;
-
-function loadImageCache() {
-  try { imageCache = JSON.parse(localStorage.getItem('amartef_img_cache') || '{}'); } catch(e) { imageCache = {}; }
-}
-function saveImageCache() {
-  try { localStorage.setItem('amartef_img_cache', JSON.stringify(imageCache)); } catch(e) {}
-}
-function clearImageCache() {
-  imageCache = {};
-  localStorage.removeItem('amartef_img_cache');
-  // Reset all bottle images to SVG placeholder then re-fetch
-  document.querySelectorAll('[id^="img_"]').forEach(el => {
-    const pid = parseInt(el.id.replace('img_',''));
-    const p = PRODUCTS.find(x => x.id === pid);
-    if (p) el.src = bottleSVG(p.cat, p.id);
-  });
-  _imgQueue = [];
-  _imgRunning = 0;
-  renderProducts();
-  showSettingsStatus('🗑️ מטמון התמונות נוקה — הבקבוקים יטענו מחדש', '#2e7d32');
-}
-function enqueueBottleImage(pid, name, cat) {
-  _imgQueue.push({pid, productName: name, cat});
-  _pumpQueue();
-}
-function _pumpQueue() {
-  if (_imgRunning >= IMG_CONCURRENCY || !_imgQueue.length) return;
-  const item = _imgQueue.shift();
-  _imgRunning++;
-  _doFetch(item.pid, item.productName, item.cat).finally(() => {
-    _imgRunning--;
-    setTimeout(_pumpQueue, IMG_DELAY_MS);
-  });
-}
-// ── SVG bottle image generator (no network, always works) ──────────
-function _genBottleSvg(productName, cat) {
-  let hash = 0;
-  const seed = (cat || '') + (productName || '');
-  for (let i = 0; i < seed.length; i++) {
-    hash = ((hash << 5) - hash) + seed.charCodeAt(i);
-    hash |= 0;
-  }
-  const hue = Math.abs(hash) % 360;
-  const c1 = 'hsl(' + hue + ',60%,58%)';
-  const c2 = 'hsl(' + hue + ',60%,32%)';
-  const lbl = (productName || '?').trim().charAt(0).toUpperCase();
-  const neck = '<rect x="33" y="5" width="14" height="24" rx="5" fill="url(#bg)"/>';
-  const body = '<path d="M28 29C19 38 17 50 17 62L17 98C17 107 22 111 30 111L50 111C58 111 63 107 63 98L63 62C63 50 61 38 52 29Z" fill="url(#bg)"/>';
-  const glare = '<ellipse cx="27" cy="58" rx="3" ry="14" fill="white" opacity="0.2"/>';
-  const label = '<rect x="20" y="60" width="40" height="30" rx="3" fill="white" opacity="0.88"/>';
-  const txt = '<text x="40" y="81" font-family="Arial,sans-serif" font-size="15" font-weight="bold" text-anchor="middle" fill="' + c2 + '">' + lbl + '</text>';
-  const grad = '<defs><linearGradient id="bg" x1="0" x2="0.4" y1="0" y2="1"><stop offset="0%" stop-color="' + c1 + '"/><stop offset="100%" stop-color="' + c2 + '"/></linearGradient></defs>';
-  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="80" height="120">' + grad + neck + body + glare + label + txt + '</svg>';
-  return 'data:image/svg+xml,' + encodeURIComponent(svg);
-}
-
-// ── Brand → real product photo (only verified-working TheCocktailDB CDN) ──
-function _getBrandImageUrl(name) {
-  if (!name || typeof name !== 'string') return null;
-  const _raw_cdb = (ing) => "https://www.thecocktaildb.com/images/ingredients/" + encodeURIComponent(ing) + "-Medium.png";
-  const cdb = (ing) => "https://images.weserv.nl/?url=www.thecocktaildb.com/images/ingredients/" + encodeURIComponent(ing) + "-Medium.png&w=400";
-  const map = [
-    ["אבסולוט",     cdb("Absolut Vodka")],
-    ["ג'ק דניאלס",  cdb("Jack Daniels")],
-    ["ג'ים ביים",   cdb("Jim Beam")],
-    ["ווילד טרקי",  cdb("Wild Turkey")],
-    ["בקארדי",      cdb("Bacardi")],
-    ["בקרדי",       cdb("Bacardi")],
-    ["קמפרי",       cdb("Campari")],
-    ["אפרול",       cdb("Aperol")],
-    ["מליבו",       cdb("Malibu rum")],
-    ["מרטיני",      cdb("Martini")],
-    ["טנקריי",      cdb("Tanqueray")],
-    ["בומביי",      cdb("Bombay Sapphire")],
-    ["סמירנוף",     cdb("Smirnoff")],
-    ["גרי גוס",     cdb("Grey Goose")],
-    ["גריי גוס",    cdb("Grey Goose")],
-    ["בלבדר",       cdb("Belvedere")],
-    ["סטוליצ",      cdb("Stolichnaya")],
-    ["פינלנדיה",    cdb("Finlandia")],
-    ["ג'וני ווקר",  cdb("Johnnie Walker")],
-    ["צ'יבס",       cdb("Chivas Regal")],
-    ["ג'יימסון",    cdb("Jameson")],
-    ["גלנפידיך",    cdb("Glenfiddich")],
-    ["גלנליבט",     cdb("Glenlivet")],
-    ["מאנקי שולדר", cdb("Monkey Shoulder")],
-    ["בלנטיינס",    cdb("Ballantines")],
-    ["דיוורס",      cdb("Dewars")],
-    ["לפרויג",      cdb("Laphroaig")],
-    ["מייקרס",      cdb("Makers Mark")],
-    ["טולמור",      cdb("Tullamore Dew")],
-    ["קפטן מורגן",  cdb("Captain Morgan")],
-    ["הוואנה",      cdb("Havana Club")],
-    ["חוסה",        cdb("Jose Cuervo")],
-    ["פטרון",       cdb("Patron")],
-    ["דון חוליו",   cdb("Don Julio")],
-    ["הנדריקס",     cdb("Hendricks")],
-    ["ביפיטר",      cdb("Beefeater")],
-    ["גורדונס",     cdb("Gordons")],
-    ["ואן גוך",     cdb("Vodka")],
-    ["ערק",         cdb("Ouzo")],
-  ];
-  for (const [heb, url] of map) {
-    if (name.includes(heb)) return url;
-  }
-  return null;
-}
-
-// ── Category → real generic bottle photo (TheCocktailDB CDN) ──
-function _getCatRealImage(cat) {
-  const m = {
-    "וודקה":   "Vodka",
-    "ויסקי":   "Whiskey",
-    "ג'ין":    "Gin",
-    "רום":     "Rum",
-    "טקילה":  "Tequila",
-    "שמפניה": "Champagne",
-    "אפריטיף":"Campari",
-    "ואן גוך": "Vodka",
-    "ערק":     "Ouzo",
-  };
-  const ing = m[cat];
-  return ing ? "https://www.thecocktaildb.com/images/ingredients/" + encodeURIComponent(ing) + "-Medium.png" : null;
-}
-
-
-// ── Category → real generic bottle photo (TheCocktailDB ingredients CDN) ──
-function _getCatRealImage(cat) {
-  const m = {
-    "וודקה":   "Vodka",
-    "ויסקי":   "Whiskey",
-    "ג'ין":    "Gin",
-    "רום":     "Rum",
-    "טקילה":  "Tequila",
-    "שמפניה": "Champagne",
-    "אפריטיף":"Campari",
-    "ואן גוך": "Vodka",
-    "ערק":     "Ouzo",
-  };
-  const ing = m[cat];
-  return ing ? "https://www.thecocktaildb.com/images/ingredients/" + encodeURIComponent(ing) + "-Medium.png" : null;
-}
-
-// ── Verify an image URL actually loads (browser-native) ──────────────────
-function _verifyImage(url) {
-  return new Promise(resolve => {
-    const img = new Image();
-    img.onload  = () => resolve(url);
-    img.onerror = () => resolve(null);
-    img.src = url;
-  });
-}
-
-// ── Brand → Wikipedia article title mapping ───────────────────────────────
-function _getBrandWikiTitle(name) {
-  const map = [
-    ["אבסולוט",        "Absolut Vodka"],
-    ["סמירנוף",        "Smirnoff"],
-    ["גריי גוס",       "Grey Goose (vodka)"],
-    ["בלבדר",          "Belvedere vodka"],
-    ["קטל וואן",       "Ketel One"],
-    ["סירוק",          "Ciroc"],
-    ["קריסטל הד",      "Crystal Head Vodka"],
-    ["פינלנדיה",       "Finlandia (vodka)"],
-    ["סטוליצ'נאיה",    "Stolichnaya"],
-    ["רוסיאן סטנדרט",  "Russian Standard (vodka)"],
-    ["ג'וני ווקר",     "Johnnie Walker"],
-    ["ג'ק דניאלס",     "Jack Daniel's"],
-    ["צ'יבס ריגל",     "Chivas Regal"],
-    ["ג'יימסון",       "Jameson whiskey"],
-    ["גלנפידיך",       "Glenfiddich"],
-    ["גלנליבט",        "The Glenlivet"],
-    ["מאנקי שולדר",    "Monkey Shoulder"],
-    ["בלנטיינס",       "Ballantine's"],
-    ["דיוורס",         "Dewar's"],
-    ["פיימס גראוס",    "The Famous Grouse"],
-    ["גרנטס",          "Grant's whisky"],
-    ["ויליאם לוסון",   "William Lawson's"],
-    ["לפרויג",         "Laphroaig"],
-    ["מייקרס מארק",    "Maker's Mark"],
-    ["ג'ים ביים",      "Jim Beam"],
-    ["ווילד טרקי",     "Wild Turkey (bourbon)"],
-    ["טולמור דיו",     "Tullamore D.E.W."],
-    ["רויאל סאלוט",    "Royal Salute whisky"],
-    ["ואן גוך",        "Van Gogh Vodka"],
-    ["הנדריקס",        "Hendrick's Gin"],
-    ["טנקראי",         "Tanqueray"],
-    ["בומביי",         "Bombay Sapphire"],
-    ["ביפיטר",         "Beefeater gin"],
-    ["גורדונס",        "Gordon's gin"],
-    ["בוטניסט",        "The Botanist (gin)"],
-    ["מאנקי 47",       "Monkey 47"],
-    ["רוקו",           "Roku gin"],
-    ["בקארדי",         "Bacardi"],
-    ["קפטן מורגן",     "Captain Morgan"],
-    ["הוואנה קלאב",    "Havana Club"],
-    ["דיפלומטיקו",     "Diplomatico"],
-    ["מליבו",          "Malibu (rum)"],
-    ["אפלטון",         "Appleton Estate"],
-    ["חוסה קוארבו",    "Jose Cuervo"],
-    ["אולמקה",         "Olmeca (tequila)"],
-    ["פטרון",          "Patron"],
-    ["1800",           "1800 Tequila"],
-    ["אספולון",        "Espolon"],
-    ["דון חוליו",      "Don Julio"],
-    ["קלאסה אזול",     "Clase Azul"],
-    ["מואה שאנדון",    "Moet & Chandon"],
-    ["וב קליקו",       "Veuve Clicquot"],
-    ["מום קורדון",     "G.H. Mumm"],
-    ["פרשינט",         "Freixenet"],
-    ["קמפרי",          "Campari"],
-    ["אפרול",          "Aperol"],
-    ["מרטיני",         "Martini (vermouth)"],
-  ];
-  for (const [heb, eng] of map) {
-    if (name.includes(heb)) return eng;
-  }
-  return null;
-}
-
-// ── Wikipedia free image lookup (no key needed) ───────────────────────────
-async function _fetchWikipediaImage(wikiTitle) {
-  try {
-    const url = "https://en.wikipedia.org/w/api.php?action=query" +
-      "&prop=pageimages&format=json&pithumbsize=400&origin=*" +
-      "&titles=" + encodeURIComponent(wikiTitle);
-    const r = await fetch(url);
-    const d = await r.json();
-    const pages = Object.values(d?.query?.pages || {});
-    return pages[0]?.thumbnail?.source || null;
-  } catch(e) { return null; }
-}
-
-// ── Gemini fallback (rate-limited but free) ───────────────────────────────
-async function _fetchGeminiImage(productName, key, attempt) {
-  attempt = attempt || 1;
-  if (attempt > 3) return null;
-  try {
-    const prompt = `Find a direct image URL (ending in .jpg .jpeg .png or .webp) ` +
-      `for the alcohol bottle: "${productName}". ` +
-      `Return ONLY the raw URL, nothing else.`;
-    const resp = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          tools: [{ google_search: {} }]
-        })
-      }
-    );
-    if (resp.status === 429) {
-      const wait = Math.min(attempt * 12000, 60000);
-      await new Promise(r => setTimeout(r, wait));
-      return _fetchGeminiImage(productName, key, attempt + 1);
-    }
-    const data = await resp.json();
-    const text = (data?.candidates?.[0]?.content?.parts || []).map(p => p.text || "").join(" ");
-    const m = text.match(/https?:\/\/[^\s"'<>\]]+\.(?:jpg|jpeg|png|webp)(?:\?[^\s"'<>\]]*)?/i);
-    return m ? m[0] : null;
-  } catch(e) { return null; }
-}
-
-async function _doFetch(pid, productName, cat) {
-  if (imageCache[pid]) {
-    const el = document.getElementById("img_" + pid);
-    if (el) el.src = imageCache[pid];
-    return;
-  }
-
-  let imageUrl = null;
-
-  // 1. Brand-specific real product photo
-  const brandUrl = _getBrandImageUrl(productName);
-  if (brandUrl) {
-    imageUrl = brandUrl; // trust weserv proxy - skip slow _verifyImage
-    console.log("[Brand]", productName);
-  }
-
-  // 2. Category fallback — real generic bottle photo
-  if (!imageUrl && cat) {
-    const catUrl = _getCatRealImage(cat);
-    if (catUrl) {
-      imageUrl = await _verifyImage(catUrl);
-      if (imageUrl) console.log("[Cat]", productName, "→", cat);
-    }
-  }
-
-  // 3. Last resort — SVG bottle (only if all real photos failed)
-  if (!imageUrl) {
-    imageUrl = _genBottleSvg(productName, cat);
-    console.log("[SVG fallback]", productName);
-  }
-
-  imageCache[pid] = imageUrl;
-  try { saveImageCache(); } catch(e) {}
-  const el = document.getElementById("img_" + pid);
-  if (el) el.src = imageUrl;
-}
-async function fetchBottleImage(pid, productName, cat) {
-  if (imageCache[pid]) {
-    const el = document.getElementById("img_" + pid);
-    if (el) el.src = imageCache[pid];
-    return;
-  }
-  enqueueBottleImage(pid, productName, cat);
-}
-
-// ─── SETTINGS ───────────────────────────────────────────────────────
-function openSettings() {
-  document.getElementById("settingsKey").value = localStorage.getItem('amartef_gcs_key') || '';
-  document.getElementById("settingsOverlay").classList.add("open");
-}
-function closeSettings() {
-  document.getElementById("settingsOverlay").classList.remove("open");
-}
-function saveSettings() {
-  const k = document.getElementById("settingsKey").value.trim();
-  if (k) {
-    localStorage.setItem('amartef_gcs_key', k);
-    showSettingsStatus('✅ נשמר! מתחיל לטעון תמונות...', 'ok');
-    setTimeout(() => {
-      closeSettings();
-      // Trigger image fetching for all visible products
-      PRODUCTS.forEach(p => {
-        if (!imageCache[p.id]) enqueueBottleImage(p.id, p.name);
-      });
-    }, 800);
-  } else {
-    showSettingsStatus('❌ הכנס מפתח תחילה', 'err');
-  }
-}
-async function testSettings() {
-  const key = document.getElementById("settingsKey").value.trim();
-  if (!key) { showSettingsStatus('❌ הכנס מפתח תחילה', 'err'); return; }
-  showSettingsStatus('⏳ בודק...', '');
-  try {
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
-      { method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ contents:[{parts:[{text:"Hi"}]}] }) }
-    );
-    if (res.ok) showSettingsStatus('✅ מפתח תקין!', 'ok');
-    else if (res.status === 429) showSettingsStatus('⚠️ מפתח תקין — חריגה ממכסה (429)', 'ok');
-    else if (res.status === 401 || res.status === 403) showSettingsStatus('❌ מפתח שגוי ('+res.status+')', 'err');
-    else showSettingsStatus('⚠️ שגיאה '+res.status+' — נסה שוב', 'err');
-  } catch(e) { showSettingsStatus('❌ שגיאת רשת: ' + e.message, 'err'); }
-}
-function showSettingsStatus(msg, cls) {
-  const el = document.getElementById('settingsStatus');
-  el.textContent = msg; el.className = 'settings-status ' + cls;
-}
-
-function init() {
-  loadImageCache();
-  const now = new Date();
-  const ds  = now.toLocaleDateString("he-IL");
-  document.getElementById("hdrDate").textContent = ds;
-  document.getElementById("quoteDate").value = ds;
-  document.getElementById("orderDate").value = ds;
-  document.getElementById("quoteNum").value  = "Q-" + now.getTime().toString().slice(-5);
-  document.getElementById("orderNum").value  = "P-" + now.getTime().toString().slice(-5);
-
+function buildTabs() {
   const tabsEl = document.getElementById("tabs");
-  ["הכל", ...Object.keys(ICON)].forEach(cat => {
+  tabsEl.innerHTML = "";
+  const customCats = [...new Set(customProducts.map(p => p.cat))].filter(c => !Object.prototype.hasOwnProperty.call(ICON, c) || ICON[c] === "🍷");
+  const allCats = [...Object.keys(ICON), ...customCats.filter(c => !ICON[c])];
+  ["הכל", ...allCats].forEach(cat => {
     const btn = document.createElement("button");
-    btn.className = "tabb" + (cat === "הכל" ? " on" : "");
-    btn.textContent = cat === "הכל" ? "✨ הכל" : ICON[cat] + " " + cat;
+    btn.className = "tabb" + (cat === activeCat ? " on" : "");
+    btn.textContent = cat === "הכל" ? "✨ הכל" : (ICON[cat] || "🍷") + " " + cat;
     btn.onclick = () => {
       activeCat = cat;
       document.querySelectorAll(".tabb").forEach(b => b.classList.remove("on"));
@@ -1316,11 +1474,28 @@ function init() {
     };
     tabsEl.appendChild(btn);
   });
+}
 
+function init() {
+  const now = new Date();
+  const ds  = now.toLocaleDateString("he-IL");
+  document.getElementById("hdrDate").textContent = ds;
+  document.getElementById("quoteDate").value = ds;
+  document.getElementById("orderDate").value = ds;
+  document.getElementById("quoteNum").value  = "Q-" + now.getTime().toString().slice(-5);
+  document.getElementById("orderNum").value  = "P-" + now.getTime().toString().slice(-5);
+
+  loadCustomProducts();
+  buildTabs();
   loadBuyPrices();
   loadSellPrices();
+  loadStock();
+  loadImageCache();
+  _loadSavedOrders();
   renderProducts();
   renderQuote();
+  // Single batch Gemini call for all unmapped products (uses 1 API credit instead of N)
+  _runGeminiBatch();
 }
 
 // ================================================================
@@ -1331,7 +1506,7 @@ function renderProducts() {
   const con = document.getElementById("productsContainer");
   con.innerHTML = "";
 
-  const filtered = PRODUCTS.filter(p => {
+  const filtered = getAllProducts().filter(p => {
     const okCat = activeCat === "הכל" || p.cat === activeCat;
     const okQ   = !q || p.name.toLowerCase().includes(q) || p.cat.toLowerCase().includes(q);
     return okCat && okQ;
@@ -1361,39 +1536,42 @@ function renderProducts() {
       const customBuy  = buyMap[p.id] !== undefined ? buyMap[p.id] : p.buy;
 
       const card = document.createElement("div");
-      card.className = "pcard";
+      card.className = "pcard" + (inStock ? "" : " no-stock");
       card.id = "card_" + p.id;
 
       card.innerHTML = `
-        <img id="img_${p.id}" class="p-bottle" src="${imageCache[p.id] && !imageCache[p.id].startsWith('data:image/svg') ? imageCache[p.id] : bottleSVG(p.cat, p.id)}" alt="${p.name}" onerror="this.src='${bottleSVG(p.cat, p.id)}'" />
+        <div class="stock-row">
+          <button class="stock-btn ${inStock ? "in" : "out"}" onclick="toggleStock(${p.id})" title="${inStock ? 'במלאי — לחץ להסרה' : 'אזל מהמלאי — לחץ להחזרה'}">
+            ${inStock ? "✓" : "✗"}
+          </button>
+        </div>
+        <img class="p-bottle" id="img_${p.id}" src="${imageCache[p.id] || _getCocktailDBUrl(p.name) || bottleSVG(p.cat, p.id)}" alt="${p.name}"
+          onclick="openImagePicker(${p.id})" title="לחץ להחלפת תמונה"
+          onerror="this.src='${bottleSVG(p.cat, p.id)}'" />
         <div class="p-name">${p.name}</div>
-        <div class="price-ref-row">
-          <span class="pr-item"><span>קנייה</span><b>₪${(p.buyNet??p.buy)}</b></span>
-          <span class="pr-item"><span>מינ\'</span><b>₪${(p.sellMin??p.sell)}</b></span>
-          <span class="pr-item"><span>מקס\'</span><b>₪${(p.sellMax??p.sell)}</b></span>
-        </div>
         <div class="sell-row">
-          <label>קנייה:</label>
+          <label>💰 קנייה:</label>
           <input class="sell-inp buy-inp" type="number" min="0" id="bi_${p.id}" value="${customBuy}"
-            onchange="onBuyChange(${p.id},this.value)" />
+            onchange="onBuyChange(${p.id},this.value)" ${inStock ? "" : "disabled"} />
         </div>
         <div class="sell-row">
-          <label>מכירה:</label>
+          <label>🏷️ מכירה:</label>
           <input class="sell-inp" type="number" min="0" id="si_${p.id}" value="${customSell}"
-            onchange="onSellChange(${p.id},this.value)" min="${p.sellMin??0}" max="${p.sellMax??9999}" />
+            onchange="onSellChange(${p.id},this.value)" ${inStock ? "" : "disabled"} />
         </div>
         <div class="qty-row">
-          <button class="qbtn" onclick="cardQtyChange(${p.id},-1)">−</button>
+          <button class="qbtn" onclick="cardQtyChange(${p.id},-1)" ${inStock ? "" : "disabled"}>−</button>
           <div    class="qdisplay" id="cq_${p.id}">1</div>
-          <button class="qbtn" onclick="cardQtyChange(${p.id},1)">+</button>
+          <button class="qbtn" onclick="cardQtyChange(${p.id},1)"  ${inStock ? "" : "disabled"}>+</button>
         </div>
-        <button class="add-btn" onclick="addToCart(${p.id})">
-          ${mode === "order" ? "הוסף להזמנה 📦" : "הוסף להצעה 🛒"}
+        <button class="add-btn" onclick="${inStock ? "addToCart(" + p.id + ")" : ""}" ${inStock ? "" : "disabled"}>
+          ${inStock ? (mode === "order" ? "הוסף להזמנה 📦" : "הוסף להצעה ➕") : "אזל מהמלאי"}
         </button>
+        ${p.custom ? `<button class="pcard-del-btn" onclick="deleteCustomProduct(${p.id})" title="מחק בקבוק">🗑</button>` : ""}
       `;
       grid.appendChild(card);
-      // Fetch bottle image (uses cache or queues API call)
-      if (!imageCache[p.id] || imageCache[p.id].startsWith('data:image/svg')) { if (imageCache[p.id]) delete imageCache[p.id]; fetchBottleImage(p.id, p.name, p.cat); } else { const el = document.getElementById('img_'+p.id); if(el) el.src=imageCache[p.id]; }
+      // טען תמונה אוטומטית אם אין cache
+      if (!imageCache[p.id]) fetchBottleImage(p.id, p.name);
     });
     con.appendChild(grid);
   });
@@ -1421,14 +1599,27 @@ function onBuyChange(pid, val) {
   if (item) { item.customBuy = buyMap[pid]; renderQuote(); }
 }
 
+function saveStock() {
+  try { localStorage.setItem("amartef_stock", JSON.stringify(stockMap)); } catch(e) {}
+}
+function loadStock() {
+  try {
+    const saved = localStorage.getItem("amartef_stock");
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      Object.keys(parsed).forEach(k => { stockMap[parseInt(k)] = parsed[k]; });
+    }
+  } catch(e) {}
+}
 function toggleStock(pid) {
   stockMap[pid] = !stockMap[pid];
+  saveStock();
   renderProducts();
 }
 
 function addToCart(pid) {
   if (!stockMap[pid]) return;
-  const p    = PRODUCTS.find(x => x.id === pid);
+  const p    = getAllProducts().find(x => x.id === pid);
   const qEl  = document.getElementById("cq_" + pid);
   const sEl  = document.getElementById("si_" + pid);
   const qty  = parseInt(qEl ? qEl.textContent : 1) || 1;
@@ -1475,26 +1666,53 @@ function renderQuote() {
     tSell += lSell;
     const lineAmt = isOrder ? lBuy : lSell;
     const div = document.createElement("div");
-    div.className = "qitem";
-    div.innerHTML = `
-      <div class="qi-ico" style="width:44px;height:56px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
-        <img src="${imageCache[item.product.id] || bottleSVG(item.product.cat, item.product.id)}" style="width:38px;height:52px;object-fit:contain;" onerror="this.style.display='none'" />
-      </div>
-      <div class="qi-body">
-        <div class="qi-name">${item.product.name}</div>
-        <div class="qi-meta">${isOrder
-          ? "קנייה: ₪" + (item.customBuy ?? item.product.buy).toFixed(0) + "/יח׳ × " + item.qty
-          : "מכירה: ₪" + item.customSell.toFixed(0) + "/יח׳ | קנייה: ₪" + (item.customBuy ?? item.product.buy).toFixed(0)}</div>
-      </div>
-      <div class="qi-right">
-        <div class="qi-total">₪${lineAmt.toFixed(0)}</div>
-        <div class="qi-qty">
-          <button class="qb" onclick="cqc(${idx},-1)">−</button>
-          <span   class="qb-n">${item.qty}</span>
-          <button class="qb" onclick="cqc(${idx},1)">+</button>
+
+    if (editingIdx === idx) {
+      div.className = "qitem qitem-editing";
+      const priceLabel = isOrder ? "מחיר קנייה" : "מחיר מכירה";
+      const priceVal   = isOrder ? (item.customBuy ?? item.product.buy) : item.customSell;
+      div.innerHTML = `
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="qi-ico">${ICON[item.product.cat] || "🍷"}</div>
+          <div class="qi-name" style="flex:1;font-size:0.76rem;font-weight:700">${item.product.name}</div>
         </div>
-        <button class="qi-del" onclick="removeItem(${idx})">✕</button>
-      </div>`;
+        <div class="qitem-edit-body">
+          <div class="qitem-edit-row">
+            <label>כמות:</label>
+            <input class="qitem-edit-inp" type="number" id="edit_qty_${idx}" min="1" value="${item.qty}" />
+          </div>
+          <div class="qitem-edit-row">
+            <label>${priceLabel} (₪):</label>
+            <input class="qitem-edit-inp" type="number" id="edit_price_${idx}" min="0" step="0.5" value="${priceVal.toFixed(2)}" />
+          </div>
+          <div class="qitem-edit-actions">
+            <button class="qitem-edit-save" onclick="saveEdit(${idx})">✓ שמור</button>
+            <button class="qitem-edit-cancel" onclick="cancelEdit()">ביטול</button>
+          </div>
+        </div>`;
+    } else {
+      div.className = "qitem";
+      div.innerHTML = `
+        <div class="qi-ico">${ICON[item.product.cat] || "🍷"}</div>
+        <div class="qi-body">
+          <div class="qi-name">${item.product.name}</div>
+          <div class="qi-meta">${isOrder
+            ? "קנייה: ₪" + (item.customBuy ?? item.product.buy).toFixed(0) + "/יח׳ × " + item.qty
+            : "מכירה: ₪" + item.customSell.toFixed(0) + '/יח׳<span class="no-print"> | קנייה: ₪' + (item.customBuy ?? item.product.buy).toFixed(0) + '</span>'}</div>
+        </div>
+        <div class="qi-right">
+          <div class="qi-total">₪${lineAmt.toFixed(0)}</div>
+          <div class="qi-qty">
+            <button class="qb" onclick="cqc(${idx},-1)">−</button>
+            <span   class="qb-n">${item.qty}</span>
+            <button class="qb" onclick="cqc(${idx},1)">+</button>
+          </div>
+          <div style="display:flex;gap:3px">
+            <button class="qi-edit-btn" onclick="startEdit(${idx})" title="ערוך פריט">✏️</button>
+            <button class="qi-del" onclick="removeItem(${idx})">✕</button>
+          </div>
+        </div>`;
+    }
     qlist.appendChild(div);
   });
 
@@ -1502,18 +1720,17 @@ function renderQuote() {
   document.getElementById("totOrder").style.display = isOrder ? "" : "none";
 
   if (isOrder) {
-    const oVat   = tBuy * VAT;
-    const oTotal = tBuy + oVat;
-    document.getElementById("oBuy").textContent   = "₪" + tBuy.toFixed(2);
-    document.getElementById("oVat").textContent   = "₪" + oVat.toFixed(2);
-    document.getElementById("oTotal").textContent = "₪" + oTotal.toFixed(2);
+    document.getElementById("oTotal").textContent = "₪" + tBuy.toFixed(2);
   } else {
-    const vat   = tSell * VAT;
-    const total = tSell + vat;
-    document.getElementById("tBuy").textContent   = "₪" + tBuy.toFixed(2);
-    document.getElementById("tSell").textContent  = "₪" + tSell.toFixed(2);
-    document.getElementById("tVat").textContent   = "₪" + vat.toFixed(2);
-    document.getElementById("tTotal").textContent = "₪" + total.toFixed(2);
+    const discount   = discountPct > 0 ? tSell * discountPct / 100 : 0;
+    const tFinal     = tSell - discount;
+    const profit     = tSell - tBuy;
+    const marginPct  = tSell > 0 ? (profit / tSell * 100).toFixed(1) : "0.0";
+    document.getElementById("tBuy").textContent    = "₪" + tBuy.toFixed(2);
+    document.getElementById("tProfit").textContent = "₪" + profit.toFixed(2) + " (" + marginPct + "%)";
+    document.getElementById("tSell").textContent   = "₪" + tSell.toFixed(2);
+    document.getElementById("discountAmt").textContent = discount > 0 ? "−₪" + discount.toFixed(2) : "";
+    document.getElementById("tTotal").textContent  = "₪" + tFinal.toFixed(2);
   }
   totSec.style.display = "block";
   updateMobBadge();
@@ -1572,9 +1789,6 @@ function sendWhatsApp() {
       return "• " + item.product.name + " × " + item.qty + "   ➜   ₪" + line.toFixed(0);
     }).join("\n");
 
-    const oVat   = tBuy * VAT;
-    const oTotal = tBuy + oVat;
-
     let msg = "📦 *AMARTEF House Of Alcohol – הזמנה מספק*\n";
     msg    += "━━━━━━━━━━━━━━━━━━━\n";
     msg    += "🔢 מס׳ הזמנה: " + oNum + "\n";
@@ -1584,7 +1798,7 @@ function sendWhatsApp() {
     msg    += "\n━━━━━━━━━━━━━━━━━━━\n";
     msg    += "*פירוט הזמנה:*\n" + lines + "\n";
     msg    += "━━━━━━━━━━━━━━━━━━━\n";
-    msg    += "💰 *סה\"כ לספק: ₪" + oTotal.toFixed(2) + "*\n";
+    msg    += "� *סה\"כ לספק: ₪" + tBuy.toFixed(2) + "*\n";
     if (notes) msg += "\n📝 " + notes + "\n";
     msg    += "\nAMARTEF House Of Alcohol 🥃";
 
@@ -1593,7 +1807,6 @@ function sendWhatsApp() {
     const url   = num
       ? "https://wa.me/" + num + "?text=" + encodeURIComponent(msg)
       : "https://wa.me/?text=" + encodeURIComponent(msg);
-    if (cart.length) saveHistoryEntry(buildHistoryEntry());
     window.open(url, "_blank");
     return;
   }
@@ -1612,9 +1825,6 @@ function sendWhatsApp() {
     return "• " + item.product.name + " × " + item.qty + "   ➜   ₪" + line.toFixed(0);
   }).join("\n");
 
-  const vat   = tSell * VAT;
-  const total = tSell + vat;
-
   let msg = "🥃 *AMARTEF House Of Alcohol*\n";
   msg    += "━━━━━━━━━━━━━━━━━━━\n";
   msg    += "📋 הצעת מחיר מס׳ " + qNum + "\n";
@@ -1624,7 +1834,7 @@ function sendWhatsApp() {
   msg    += "\n━━━━━━━━━━━━━━━━━━━\n";
   msg    += "*פירוט הזמנה:*\n" + lines + "\n";
   msg    += "━━━━━━━━━━━━━━━━━━━\n";
-  msg    += "💰 *סה\"כ לתשלום: ₪" + total.toFixed(2) + "*\n";
+  msg    += "💰 *סה\"כ לתשלום: ₪" + tSell.toFixed(2) + "*\n";
   if (notes) msg += "\n📝 " + notes + "\n";
   msg    += "\nבברכה, צוות AMARTEF 🙏";
 
@@ -1633,207 +1843,15 @@ function sendWhatsApp() {
   const url   = num
     ? "https://wa.me/" + num + "?text=" + encodeURIComponent(msg)
     : "https://wa.me/?text=" + encodeURIComponent(msg);
-  if (cart.length) saveHistoryEntry(buildHistoryEntry());
   window.open(url, "_blank");
 }
 
 // ================================================================
-// בניית HTML של הצעה/הזמנה — משמש גם ל-PDF, גם ל-Word, גם להדפסה
-// ================================================================
-function buildDocHTML() {
-  if (mode === "order") {
-    const sName  = document.getElementById("supplierName").value  || "ספק";
-    const sPhone = document.getElementById("supplierPhone").value || "";
-    const sAgent = document.getElementById("supplierAgent").value || "";
-    const oNum   = document.getElementById("orderNum").value      || "";
-    const date   = document.getElementById("orderDate").value     || "";
-    const notes  = document.getElementById("notes").value         || "";
-
-    let tBuy = 0;
-    const rows = cart.map((item, i) => {
-      const buy  = item.customBuy ?? item.product.buy;
-      const line = buy * item.qty;
-      tBuy += line;
-      const bg = i % 2 === 0 ? "#f9f9f9" : "#fff";
-      return `<tr style="background:${bg}">
-        <td style="text-align:center;color:#888">${i + 1}</td>
-        <td>${item.product.name}</td>
-        <td style="text-align:center;font-weight:700">${item.qty}</td>
-      </tr>`;
-    }).join("");
-    const oTotal = tBuy;
-    return { title: `הזמנה ${oNum}`, fileBase: `AMARTEF-Order-${oNum||Date.now()}`, html: `<!DOCTYPE html>
-<html dir="rtl" lang="he"><head><meta charset="UTF-8"/>
-<style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
-body{direction:rtl;padding:20mm 16mm 15mm;font-size:10.5pt;color:#111;background:#fff}
-.logo{text-align:center;padding-bottom:14px;border-bottom:3px solid #1a5276;margin-bottom:14px}
-.logo h1{font-size:20pt;font-weight:900;color:#0c0c1a}
-.logo p{color:#999;font-size:8.5pt;margin-top:3px}
-.banner{background:#1a5276;color:#fff;border-radius:8px;padding:9px 16px;text-align:center;font-size:11pt;font-weight:700;margin-bottom:14px}
-.meta{display:flex;gap:10px;margin-bottom:18px}
-.mb{flex:1;background:#f5f5f5;border:1px solid #e0e0e0;border-radius:8px;padding:10px 13px}
-.mb h3{font-size:7.5pt;color:#999;letter-spacing:0.6px;margin-bottom:5px}
-.mb p{font-size:10pt;font-weight:700}
-.mb .sub{font-size:8.5pt;color:#666;font-weight:400;margin-top:2px}
-.total-box{background:#1a5276;color:#fff}
-.total-box h3{color:#7ec8e3}.total-box p{color:#7dffb3;font-size:14pt}.total-box .sub{color:#aaa}
-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:9.5pt}
-thead tr{background:#1a5276}thead th{color:#fff;padding:9px 8px;font-weight:700;font-size:9pt}
-tbody td{padding:7px 8px;border-bottom:1px solid #eee}
-.totals-blk{display:flex;justify-content:flex-end;margin-top:10px}
-.totals-inner{border:2px solid #1a5276;border-radius:10px;padding:12px 16px;width:52%}
-.tr{display:flex;justify-content:space-between;padding:3px 0;font-size:9.5pt;color:#555}
-.tr span:last-child{font-weight:600;color:#111}
-.tr.big{font-size:12pt;font-weight:900;border-top:1px solid #ddd;margin-top:7px;padding-top:8px}
-.tr.big span{color:#1a5276}
-.notes-box{margin-top:14px;padding:10px 13px;background:#f5f5f5;border-radius:8px;border:1px solid #e0e0e0;font-size:9pt}
-.footer{margin-top:22px;text-align:center;font-size:8pt;color:#bbb;border-top:1px solid #eee;padding-top:12px}
-</style></head><body>
-<div class="logo"><h1>AMARTEF House Of Alcohol</h1><p>מומחים באלכוהול איכותי</p></div>
-<div class="banner">📦 הזמנה מספק</div>
-<div class="meta">
-  <div class="mb"><h3>ספק</h3><p>${sName}</p>${sPhone?`<p class="sub">📞 ${sPhone}</p>`:""}${sAgent?`<p class="sub">👤 ${sAgent}</p>`:""}</div>
-  <div class="mb"><h3>פרטי הזמנה</h3><p>מס׳ ${oNum}</p><p class="sub">📅 ${date}</p></div>
-  <div class="mb"><h3>סה"כ פריטים</h3><p>${cart.reduce((s,it)=>s+it.qty,0)} יחידות</p><p class="sub">${cart.length} מוצרים</p></div>
-</div>
-<table><thead><tr><th style="width:40px">#</th><th style="text-align:right">מוצר</th><th style="width:80px">כמות</th></tr></thead><tbody>${rows}</tbody></table>
-${notes?`<div class="notes-box"><h3>הערות</h3><p>${notes}</p></div>`:""}
-<div class="footer"><p>AMARTEF House Of Alcohol &nbsp;|&nbsp; הזמנה מס׳ ${oNum} | ${date}</p>
-<p style="margin-top:6px">חתימה: __________________ &nbsp;&nbsp; תאריך: __________________</p></div>
-</body></html>` };
-  }
-
-  const name  = document.getElementById("clientName").value  || "לקוח";
-  const phone = document.getElementById("clientPhone").value || "";
-  const city  = document.getElementById("clientCity").value  || "";
-  const qNum  = document.getElementById("quoteNum").value    || "";
-  const date  = document.getElementById("quoteDate").value   || "";
-  const notes = document.getElementById("notes").value       || "";
-
-  let tSell = 0;
-  const rows = cart.map((item, i) => {
-    const line = item.customSell * item.qty;
-    tSell += line;
-    const bg = i % 2 === 0 ? "#f9f9f9" : "#fff";
-    return `<tr style="background:${bg}">
-      <td style="text-align:center;color:#888">${i + 1}</td>
-      <td>${item.product.name}</td>
-      <td style="text-align:center;font-weight:700">${item.qty}</td>
-      <td style="text-align:center">₪${item.customSell.toFixed(2)}</td>
-      <td style="text-align:center;font-weight:700;color:#1a5276">₪${line.toFixed(2)}</td>
-    </tr>`;
-  }).join("");
-  const vat   = tSell * VAT;
-  const total = tSell + vat;
-  return { title: `הצעת מחיר ${qNum}`, fileBase: `AMARTEF-Quote-${qNum||Date.now()}`, html: `<!DOCTYPE html>
-<html dir="rtl" lang="he"><head><meta charset="UTF-8"/>
-<style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
-body{direction:rtl;padding:20mm 16mm 15mm;font-size:10.5pt;color:#111;background:#fff}
-.logo{text-align:center;padding-bottom:14px;border-bottom:3px solid #c9a227;margin-bottom:16px}
-.logo h1{font-size:20pt;font-weight:900;color:#0c0c1a}
-.logo p{color:#999;font-size:8.5pt;margin-top:3px}
-.meta{display:flex;gap:10px;margin-bottom:18px}
-.mb{flex:1;background:#f5f5f5;border:1px solid #e0e0e0;border-radius:8px;padding:10px 13px}
-.mb h3{font-size:7.5pt;color:#999;letter-spacing:0.6px;margin-bottom:5px}
-.mb p{font-size:10pt;font-weight:700}.mb .sub{font-size:8.5pt;color:#666;margin-top:2px}
-.total-box{background:#0c0c1a;color:#fff}
-.total-box h3{color:#c9a227}.total-box p{color:#22c55e;font-size:14pt}.total-box .sub{color:#aaa}
-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:9.5pt}
-thead tr{background:#0c0c1a}thead th{color:#c9a227;padding:9px 8px;font-weight:700;font-size:9pt}
-tbody td{padding:7px 8px;border-bottom:1px solid #eee}
-.totals-blk{display:flex;justify-content:flex-end;margin-top:10px}
-.totals-inner{border:2px solid #0c0c1a;border-radius:10px;padding:12px 16px;width:52%}
-.tr{display:flex;justify-content:space-between;padding:3px 0;font-size:9.5pt;color:#555}
-.tr span:last-child{font-weight:600;color:#111}
-.tr.big{font-size:12pt;font-weight:900;border-top:1px solid #ddd;margin-top:7px;padding-top:8px}
-.tr.big span{color:#0a5}
-.notes-box{margin-top:14px;padding:10px 13px;background:#f5f5f5;border-radius:8px;border:1px solid #e0e0e0;font-size:9pt}
-.footer{margin-top:22px;text-align:center;font-size:8pt;color:#bbb;border-top:1px solid #eee;padding-top:12px}
-</style></head><body>
-<div class="logo"><h1>AMARTEF House Of Alcohol</h1><p>מומחים באלכוהול איכותי | הצעת מחיר מקצועית</p></div>
-<div class="meta">
-  <div class="mb"><h3>לקוח</h3><p>${name}</p>${phone?`<p class="sub">📞 ${phone}</p>`:""}${city?`<p class="sub">📍 ${city}</p>`:""}</div>
-  <div class="mb"><h3>פרטי הצעה</h3><p>מס׳ ${qNum}</p><p class="sub">📅 ${date}</p></div>
-  <div class="mb total-box"><h3>סה"כ לתשלום</h3><p>₪${total.toFixed(2)}</p></div>
-</div>
-<table><thead><tr><th style="width:32px">#</th><th style="text-align:right">מוצר</th><th>כמות</th><th>מחיר ליח׳</th><th>סה"כ</th></tr></thead><tbody>${rows}</tbody></table>
-<div class="totals-blk"><div class="totals-inner">
-  <div class="tr big"><span>💰 סה"כ לתשלום:</span><span>₪${total.toFixed(2)}</span></div>
-</div></div>
-${notes?`<div class="notes-box"><h3>הערות</h3><p>${notes}</p></div>`:""}
-<div class="footer"><p>AMARTEF House Of Alcohol &nbsp;|&nbsp; הצעה תקפה ל-30 יום ממועד הפקתה</p><p style="margin-top:4px">תודה על האמון! 🙏</p></div>
-</body></html>` };
-}
-
-
-// ================================================================
-// הורדת PDF — קובץ PDF אמיתי דרך html2pdf
+// הורדת PDF – נפתח חלון הדפסה מסוגנן
 // ================================================================
 function downloadPDF() {
   if (!cart.length) { alert(mode === "order" ? "הוסף מוצרים להזמנה לפני הורדת PDF" : "הוסף מוצרים להצעה לפני הורדת PDF"); return; }
-  if (cart.length) saveHistoryEntry(buildHistoryEntry());
-  const doc = buildDocHTML();
-  const bodyMatch  = doc.html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
-  const styleMatch = doc.html.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
-  const wrap = document.createElement("div");
-  wrap.style.cssText = "position:fixed;top:0;left:0;z-index:99999;width:210mm;min-height:297mm;background:#fff;direction:rtl;opacity:0.001;pointer-events:none;";
-  wrap.innerHTML = (styleMatch ? "<style>" + styleMatch[1] + "</style>" : "") + (bodyMatch ? bodyMatch[1] : doc.html);
-  document.body.appendChild(wrap);
-  if (typeof html2pdf === "undefined") {
-    document.body.removeChild(wrap);
-    alert("ספריית PDF טרם נטענה — נסה שוב בעוד רגע"); return;
-  }
-  html2pdf().set({
-    margin:      [10, 10, 10, 10],
-    filename:    doc.fileBase + ".pdf",
-    image:       { type: "jpeg", quality: 0.97 },
-    html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff", logging: false },
-    jsPDF:       { unit: "mm", format: "a4", orientation: "portrait" }
-  }).from(wrap).save().then(function() {
-    if (wrap.parentNode) document.body.removeChild(wrap);
-  }).catch(function(err) {
-    console.error("PDF error:", err);
-    if (wrap.parentNode) document.body.removeChild(wrap);
-    alert("שגיאה בהפקת PDF — נסה שוב");
-  });
-}
 
-// ================================================================
-// הורדת מסמך Word (.doc) — נפתח ב-Word וניתן לעריכה מלאה
-// ================================================================
-function downloadWord() {
-  if (!cart.length) { alert(mode === "order" ? "הוסף מוצרים להזמנה לפני הורדת Word" : "הוסף מוצרים להצעה לפני הורדת Word"); return; }
-  const doc = buildDocHTML();
-
-  // עטיפת MS Word — מאפשרת ל-Word לפתוח את הקובץ עם RTL וסגנונות
-  const header = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>`;
-  const bodyMatch  = doc.html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
-  const styleMatch = doc.html.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
-  const fullHTML = `${header}<head><meta charset='utf-8'><title>${doc.title}</title>
-<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]-->
-${styleMatch ? `<style>${styleMatch[1]}</style>` : ""}
-</head><body dir="rtl">${bodyMatch ? bodyMatch[1] : doc.html}</body></html>`;
-
-  const blob = new Blob(['\ufeff' + fullHTML], { type: 'application/msword' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href     = url;
-  a.download = `${doc.fileBase}.doc`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-
-  if (cart.length) saveHistoryEntry(buildHistoryEntry());
-}
-
-// ================================================================
-// (ישן) הורדת PDF דרך חלון הדפסה — נשמר כגיבוי
-// ================================================================
-function downloadPDF_legacy_DISABLED() {
-  return; // dead code — kept only for reference
   if (mode === "order") {
     const sName  = document.getElementById("supplierName").value  || "ספק";
     const sPhone = document.getElementById("supplierPhone").value || "";
@@ -1857,18 +1875,14 @@ function downloadPDF_legacy_DISABLED() {
       </tr>`;
     }).join("");
 
-    const oVat   = tBuy * VAT;
-    const oTotal = tBuy + oVat;
-
     const html = `<!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
   <meta charset="UTF-8"/>
   <title>הזמנה מספק ${oNum} – AMARTEF</title>
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700;900&display=swap" rel="stylesheet"/>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'Heebo',Arial,sans-serif;direction:rtl;padding:20mm 16mm 15mm;font-size:10.5pt;color:#111;background:#fff}
+    body{font-family:'Segoe UI',Arial,'Helvetica Neue',sans-serif;direction:rtl;padding:20mm 16mm 15mm;font-size:10.5pt;color:#111;background:#fff}
     .logo{text-align:center;padding-bottom:14px;border-bottom:3px solid #1a5276;margin-bottom:14px}
     .logo h1{font-size:20pt;font-weight:900;color:#0c0c1a}
     .logo p{color:#999;font-size:8.5pt;margin-top:3px}
@@ -1918,8 +1932,7 @@ function downloadPDF_legacy_DISABLED() {
     </div>
     <div class="mb total-box">
       <h3>סה"כ לספק</h3>
-      <p>₪${oTotal.toFixed(2)}</p>
-      
+      <p>₪${tBuy.toFixed(2)}</p>
     </div>
   </div>
   <table>
@@ -1934,7 +1947,7 @@ function downloadPDF_legacy_DISABLED() {
   </table>
   <div class="totals-blk">
     <div class="totals-inner">
-      <div class="tr big"><span>📦 סה"כ לספק:</span><span>₪${oTotal.toFixed(2)}</span></div>
+      <div class="tr big"><span>📦 סה"כ לספק:</span><span>₪${tBuy.toFixed(2)}</span></div>
     </div>
   </div>
   ${notes ? `<div class="notes-box"><h3>הערות</h3><p>${notes}</p></div>` : ""}
@@ -1942,15 +1955,20 @@ function downloadPDF_legacy_DISABLED() {
     <p>AMARTEF House Of Alcohol &nbsp;|&nbsp; הזמנה מס׳ ${oNum} | ${date}</p>
     <p style="margin-top:6px">חתימה: __________________ &nbsp;&nbsp; תאריך: __________________</p>
   </div>
-  <script>window.onload=function(){setTimeout(function(){window.print();},600);}<\/script>
 </body>
 </html>`;
 
-    if (cart.length) saveHistoryEntry(buildHistoryEntry());
-    const win = window.open("", "_blank", "width=900,height=1000,scrollbars=yes");
-    if (!win) { alert("אנא אפשר חלונות קופצים בדפדפן"); return; }
-    win.document.write(html);
-    win.document.close();
+    const _if1 = document.createElement('iframe');
+    _if1.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:210mm;height:297mm;border:none;';
+    document.body.appendChild(_if1);
+    _if1.srcdoc = html;
+    _if1.onload = function() {
+      setTimeout(function() {
+        _if1.contentWindow.focus();
+        _if1.contentWindow.print();
+        setTimeout(function(){ if(_if1.parentNode) _if1.parentNode.removeChild(_if1); }, 60000);
+      }, 400);
+    };
     return;
   }
 
@@ -1975,18 +1993,14 @@ function downloadPDF_legacy_DISABLED() {
     </tr>`;
   }).join("");
 
-  const vat   = tSell * VAT;
-  const total = tSell + vat;
-
   const html = `<!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
   <meta charset="UTF-8"/>
   <title>הצעת מחיר ${qNum} – AMARTEF</title>
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700;900&display=swap" rel="stylesheet"/>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'Heebo',Arial,sans-serif;direction:rtl;padding:20mm 16mm 15mm;font-size:10.5pt;color:#111;background:#fff}
+    body{font-family:'Segoe UI',Arial,'Helvetica Neue',sans-serif;direction:rtl;padding:20mm 16mm 15mm;font-size:10.5pt;color:#111;background:#fff}
     .logo{text-align:center;padding-bottom:14px;border-bottom:3px solid #c9a227;margin-bottom:16px}
     .logo h1{font-size:20pt;font-weight:900;color:#0c0c1a;letter-spacing:0.3px}
     .logo p{color:#999;font-size:8.5pt;margin-top:3px}
@@ -2035,8 +2049,8 @@ function downloadPDF_legacy_DISABLED() {
     </div>
     <div class="mb total-box">
       <h3>סה"כ לתשלום</h3>
-      <p>₪${total.toFixed(2)}</p>
-      
+      <p>₪${tSell.toFixed(2)}</p>
+      <p class="sub">מחיר לתשלום</p>
     </div>
   </div>
 
@@ -2053,7 +2067,7 @@ function downloadPDF_legacy_DISABLED() {
 
   <div class="totals-blk">
     <div class="totals-inner">
-      <div class="tr big"><span>💰 סה"כ לתשלום:</span><span>₪${total.toFixed(2)}</span></div>
+      <div class="tr big"><span>💰 סה"כ לתשלום:</span><span>₪${tSell.toFixed(2)}</span></div>
     </div>
   </div>
 
@@ -2064,15 +2078,20 @@ function downloadPDF_legacy_DISABLED() {
     <p style="margin-top:4px">תודה על האמון! 🙏</p>
   </div>
 
-  <script>window.onload=function(){setTimeout(function(){window.print();},600);}<\/script>
 </body>
 </html>`;
 
-  if (cart.length) saveHistoryEntry(buildHistoryEntry());
-  const win = window.open("", "_blank", "width=900,height=1000,scrollbars=yes");
-  if (!win) { alert("אנא אפשר חלונות קופצים בדפדפן לפתיחת ה-PDF"); return; }
-  win.document.write(html);
-  win.document.close();
+  const _if2 = document.createElement('iframe');
+  _if2.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:210mm;height:297mm;border:none;';
+  document.body.appendChild(_if2);
+  _if2.srcdoc = html;
+  _if2.onload = function() {
+    setTimeout(function() {
+      _if2.contentWindow.focus();
+      _if2.contentWindow.print();
+      setTimeout(function(){ if(_if2.parentNode) _if2.parentNode.removeChild(_if2); }, 60000);
+    }, 400);
+  };
 }
 
 // ================================================================
@@ -2116,158 +2135,170 @@ window.addEventListener('resize', () => {
 });
 
 // ================================================================
-// היסטוריית הצעות
+// עריכת פריט בסל
 // ================================================================
-const HIST_KEY  = "amartef_quote_history";
-const TEN_YEARS = 10 * 365.25 * 24 * 3600 * 1000;
+let editingIdx = null;
 
-function loadHistory() {
-  try {
-    const raw = localStorage.getItem(HIST_KEY);
-    if (!raw) return [];
-    const all = JSON.parse(raw);
-    const cutoff = Date.now() - TEN_YEARS;
-    return all.filter(e => e.timestamp >= cutoff);
-  } catch(e) { return []; }
+function startEdit(idx) {
+  editingIdx = idx;
+  renderQuote();
+  setTimeout(() => {
+    const el = document.getElementById("edit_qty_" + idx);
+    if (el) el.focus();
+  }, 30);
 }
 
-function saveHistoryEntry(entry) {
-  const list = loadHistory();
-  list.unshift(entry);
-  try { localStorage.setItem(HIST_KEY, JSON.stringify(list)); } catch(e) {}
-}
-
-function deleteHistoryEntry(ts) {
-  const list = loadHistory().filter(e => e.timestamp !== ts);
-  try { localStorage.setItem(HIST_KEY, JSON.stringify(list)); } catch(e) {}
-  renderHistoryModal();
-}
-
-function buildHistoryEntry() {
-  const isOrder = mode === "order";
-  let tSell = 0, tBuy = 0;
-  const items = cart.map(item => {
-    const sell = item.customSell * item.qty;
-    const buy  = (item.customBuy ?? item.product.buy) * item.qty;
-    tSell += sell;
-    tBuy  += buy;
-    return { name: item.product.name, cat: item.product.cat, qty: item.qty,
-             sell: item.customSell, buy: item.customBuy ?? item.product.buy,
-             line: isOrder ? buy : sell };
-  });
-  if (isOrder) {
-    const total = tBuy;
-    return {
-      timestamp: Date.now(), type: "order",
-      id:    document.getElementById("orderNum").value      || "",
-      date:  document.getElementById("orderDate").value     || "",
-      name:  document.getElementById("supplierName").value  || "",
-      phone: document.getElementById("supplierPhone").value || "",
-      extra: document.getElementById("supplierAgent").value || "",
-      notes: document.getElementById("notes").value         || "",
-      items, total,
-    };
+function saveEdit(idx) {
+  const qtyEl   = document.getElementById("edit_qty_"   + idx);
+  const priceEl = document.getElementById("edit_price_" + idx);
+  if (!qtyEl) return;
+  const qty   = parseInt(qtyEl.value)   || 0;
+  const price = parseFloat(priceEl ? priceEl.value : 0) || 0;
+  if (qty <= 0) {
+    cart.splice(idx, 1);
   } else {
-    const total = tSell;
-    return {
-      timestamp: Date.now(), type: "quote",
-      id:    document.getElementById("quoteNum").value    || "",
-      date:  document.getElementById("quoteDate").value   || "",
-      name:  document.getElementById("clientName").value  || "",
-      phone: document.getElementById("clientPhone").value || "",
-      extra: document.getElementById("clientCity").value  || "",
-      notes: document.getElementById("notes").value       || "",
-      items, total,
-    };
+    cart[idx].qty = qty;
+    if (mode === "order") cart[idx].customBuy  = price;
+    else                  cart[idx].customSell = price;
   }
+  editingIdx = null;
+  renderQuote();
+  renderProducts();
 }
 
-function openHistory() {
-  renderHistoryModal();
-  document.getElementById("histOverlay").classList.add("open");
-  document.getElementById("histSearch").value = "";
-  renderHistoryModal();
+function cancelEdit() {
+  editingIdx = null;
+  renderQuote();
 }
 
-function closeHistory() {
-  document.getElementById("histOverlay").classList.remove("open");
+// ================================================================
+// הנחה גלובלית
+// ================================================================
+let discountPct = 0;
+
+function onDiscountChange(val) {
+  discountPct = Math.max(0, Math.min(100, parseFloat(val) || 0));
+  renderQuote();
 }
 
-function overlayClose(e) {
-  if (e.target === document.getElementById("histOverlay")) closeHistory();
+// ================================================================
+// שמירת הזמנות
+// ================================================================
+let savedOrders = [];
+
+function _loadSavedOrders() {
+  try {
+    const s = localStorage.getItem("amartef_saved_orders");
+    if (s) savedOrders = JSON.parse(s);
+  } catch(e) {}
 }
 
-function renderHistoryModal() {
-  const body = document.getElementById("histBody");
-  const q    = (document.getElementById("histSearch").value || "").trim().toLowerCase();
-  let list   = loadHistory();
-  if (q) {
-    const qn = q.replace(/[-\s]/g, "");
-    list = list.filter(e =>
-      (e.name  || "").toLowerCase().includes(q) ||
-      (e.phone || "").replace(/[-\s]/g, "").includes(qn) ||
-      (e.id    || "").toLowerCase().includes(q) ||
-      (e.date  || "").toLowerCase().includes(q) ||
-      (e.items || []).some(i => i.name.toLowerCase().includes(q))
-    );
-  }
-  if (!list.length) {
-    body.innerHTML = `<div class="hist-empty">📋 אין פריטים בהיסטוריה<br/><span style="font-size:0.78rem;color:#888">הצעות יישמרו לאחר שליחת וואטסאפ, הורדת PDF או הדפסה</span></div>`;
-    return;
-  }
-  body.innerHTML = "";
-  list.forEach(e => {
-    const entry = document.createElement("div");
-    entry.className = "hist-entry";
-    const typeBadge = e.type === "order"
-      ? `<span class="hist-type-badge">📦 הזמנה</span>`
-      : `<span class="hist-type-badge">📋 הצעה</span>`;
-    const subParts = [
-  ];
-    if (e.name)  subParts.push((e.type === "order" ? "🏢 " : "👤 ") + e.name);
-    if (e.phone) subParts.push("📞 " + e.phone);
-    if (e.extra && e.type === "order") subParts.push("👤 נציג: " + e.extra);
-    if (e.extra && e.type === "quote") subParts.push("📍 " + e.extra);
-    if (e.items) subParts.push(e.items.length + " פריטים שונים");
-    const subLine = subParts.join(" • ");
-    const itemsHtml = (e.items||[]).map(i =>
-      `<div class="hist-item-line">
-         <span>${ICON[i.cat]||"🍷"} ${i.name} × ${i.qty}</span>
-         <span style="color:var(--muted)">₪${i.line.toFixed(0)}</span>
-       </div>`
-    ).join("");
-    const notesHtml = e.notes ? `<div class="hist-notes">📝 ${e.notes}</div>` : "";
-    entry.innerHTML = `
-      <div class="hist-entry-hdr" onclick="toggleHist(this)">
-        <div class="hist-entry-meta">
-          <div class="hist-entry-title">${e.type === "order" ? "📦" : "📋"} ${e.id || "ללא מספר"} &nbsp; ${e.date}</div>
-          <div class="hist-entry-sub">${subLine}</div>
+function _persistSavedOrders() {
+  try { localStorage.setItem("amartef_saved_orders", JSON.stringify(savedOrders)); } catch(e) {}
+}
+
+function saveCurrentOrder() {
+  if (!cart.length) { alert(mode === "order" ? "אין מוצרים בהזמנה" : "אין מוצרים בהצעה"); return; }
+  const defaultName = (mode === "order"
+    ? document.getElementById("supplierName").value
+    : document.getElementById("clientName").value) || "";
+  const name = prompt("שם לשמירה:", defaultName + (defaultName ? " – " : "") + new Date().toLocaleDateString("he-IL"));
+  if (name === null) return;
+  const finalName = name.trim() || ("הזמנה " + new Date().toLocaleDateString("he-IL"));
+
+  const snap = {
+    id:   Date.now(),
+    name: finalName,
+    mode,
+    date: new Date().toISOString(),
+    cart: JSON.parse(JSON.stringify(cart)),
+    discount: discountPct,
+    fields: {
+      clientName:    document.getElementById("clientName").value,
+      clientPhone:   document.getElementById("clientPhone").value,
+      clientCity:    document.getElementById("clientCity").value,
+      quoteNum:      document.getElementById("quoteNum").value,
+      quoteDate:     document.getElementById("quoteDate").value,
+      supplierName:  document.getElementById("supplierName").value,
+      supplierPhone: document.getElementById("supplierPhone").value,
+      supplierAgent: document.getElementById("supplierAgent").value,
+      orderNum:      document.getElementById("orderNum").value,
+      orderDate:     document.getElementById("orderDate").value,
+      notes:         document.getElementById("notes").value,
+    }
+  };
+  savedOrders.unshift(snap);
+  _persistSavedOrders();
+  alert("✅ נשמר בהצלחה!");
+}
+
+function openSavedOrders() {
+  _loadSavedOrders();
+  const list = document.getElementById("savedOrdersList");
+  if (!savedOrders.length) {
+    list.innerHTML = '<p style="color:rgba(244,236,218,0.4);text-align:center;padding:22px 0;font-size:0.85rem">אין הזמנות שמורות</p>';
+  } else {
+    list.innerHTML = savedOrders.map((o, i) => {
+      const d     = new Date(o.date).toLocaleDateString("he-IL");
+      const total = (o.cart || []).reduce((s, it) => {
+        const price = o.mode === "order" ? (it.customBuy ?? it.product.buy) : it.customSell;
+        return s + price * it.qty;
+      }, 0);
+      const disc    = o.discount > 0 ? total * o.discount / 100 : 0;
+      const netAmt  = total - disc;
+      const items   = (o.cart || []).reduce((s, it) => s + it.qty, 0);
+      const mLbl    = o.mode === "order" ? "📦 הזמנה" : "📋 הצעה";
+      return `<div class="saved-order-item">
+        <div class="so-info">
+          <div class="so-name">${mLbl} – ${o.name}</div>
+          <div class="so-meta">${d} &nbsp;·&nbsp; ${items} פריטים &nbsp;·&nbsp; ₪${netAmt.toFixed(0)}${o.discount > 0 ? " (הנחה " + o.discount + "%)" : ""}</div>
         </div>
-        <div class="hist-entry-right">
-          ${typeBadge}
-          <div class="hist-entry-total">₪${(e.total||0).toFixed(0)}</div>
-          <button class="hist-del-btn" onclick="event.stopPropagation();deleteHistoryEntry(${e.timestamp})" title="מחק">&times;</button>
-        </div>
-      </div>
-      <div class="hist-entry-body">
-        ${itemsHtml}
-        ${notesHtml}
-        <div class="hist-summary-row">
-          <span>סה"כ ${e.type === "order" ? "לספק" : "לתשלום"}</span>
-          <span class="hist-summary-total">₪${(e.total||0).toFixed(2)}</span>
+        <div class="so-actions">
+          <button class="so-load" onclick="loadSavedOrder(${i})">טען</button>
+          <button class="so-del"  onclick="deleteSavedOrder(${i})">🗑</button>
         </div>
       </div>`;
-    body.appendChild(entry);
-  });
+    }).join("");
+  }
+  document.getElementById("savedOrdersOverlay").classList.add("open");
 }
 
-function toggleHist(hdr) {
-  hdr.nextElementSibling.classList.toggle("open");
+function closeSavedOrders() {
+  document.getElementById("savedOrdersOverlay").classList.remove("open");
 }
 
-function printQuote() {
-  if (cart.length) saveHistoryEntry(buildHistoryEntry());
-  window.print();
+function loadSavedOrder(i) {
+  const o = savedOrders[i];
+  if (!o) return;
+  if (!confirm('לטעון "' + o.name + '"?\nההזמנה הנוכחית תוחלף.')) return;
+  cart = JSON.parse(JSON.stringify(o.cart || []));
+  discountPct = o.discount || 0;
+  const discInp = document.getElementById("discountInput");
+  if (discInp) discInp.value = discountPct;
+  editingIdx = null;
+  setMode(o.mode || "quote");
+  if (o.fields) {
+    const f = o.fields;
+    document.getElementById("clientName").value    = f.clientName    || "";
+    document.getElementById("clientPhone").value   = f.clientPhone   || "";
+    document.getElementById("clientCity").value    = f.clientCity    || "";
+    document.getElementById("quoteNum").value      = f.quoteNum      || "";
+    document.getElementById("supplierName").value  = f.supplierName  || "";
+    document.getElementById("supplierPhone").value = f.supplierPhone || "";
+    document.getElementById("supplierAgent").value = f.supplierAgent || "";
+    document.getElementById("orderNum").value      = f.orderNum      || "";
+    document.getElementById("notes").value         = f.notes         || "";
+  }
+  closeSavedOrders();
+  renderQuote();
+  renderProducts();
+}
+
+function deleteSavedOrder(i) {
+  if (!confirm("למחוק את ההזמנה השמורה?")) return;
+  savedOrders.splice(i, 1);
+  _persistSavedOrders();
+  openSavedOrders();
 }
 
 // ================================================================
@@ -2276,6 +2307,5 @@ init();
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
-</script>
 </body>
 </html>
